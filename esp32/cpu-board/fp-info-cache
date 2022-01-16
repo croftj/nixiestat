@@ -1,4 +1,4 @@
-19763026241551541
+19769608810705541
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -83069,6 +83069,13 @@ Mill-Max-0295
 0
 0
 croftj
+Mill-Max-295x7
+
+
+0
+7
+7
+croftj
 Mill-Max-295x10
 
 
@@ -83076,12 +83083,26 @@ Mill-Max-295x10
 10
 10
 croftj
+Mill-Max-295x11
+
+
+0
+11
+11
+croftj
 MillMax-0295
 
 
 0
 1
 1
+croftj
+NE2
+
+
+0
+2
+2
 croftj
 QFP80P900X900X120-32N
 
@@ -83103,6 +83124,13 @@ TES-1-2834015-6
 0
 12
 6
+croftj
+conn-phx-1703090
+
+
+0
+7
+7
 croftj
 esp32_e_wrover
 
