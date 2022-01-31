@@ -1,0 +1,943 @@
+EESchema Schematic File Version 4
+EELAYER 30 0
+EELAYER END
+$Descr A4 11693 8268
+encoding utf-8
+Sheet 2 2
+Title "NixieStat Thermostat Display Board"
+Date "2022-01-30"
+Rev ""
+Comp "Joe Croft"
+Comment1 ""
+Comment2 ""
+Comment3 "Nixie Anode Drivers"
+Comment4 "$Id$"
+$EndDescr
+Text GLabel 3350 1850 2    50   Input ~ 0
+dig0
+$Comp
+L croftj:160V V?
+U 1 1 622A62B5
+P 2500 950
+AR Path="/622A62B5" Ref="V?"  Part="1" 
+AR Path="/62292E41/622A62B5" Ref="V2"  Part="1" 
+F 0 "V2" H 2450 850 50  0001 C CNN
+F 1 "160V" H 2400 950 50  0000 L CNN
+F 2 "" H 2500 950 50  0001 C CNN
+F 3 "" H 2500 950 50  0001 C CNN
+	1    2500 950 
+	1    0    0    -1  
+$EndComp
+Text GLabel 1900 1950 0    50   Input ~ 0
+idig0
+Wire Wire Line
+	2500 1150 2250 1150
+Connection ~ 2500 1150
+Wire Wire Line
+	2500 1100 2500 1150
+Wire Wire Line
+	2700 1800 2700 1850
+$Comp
+L power:GNDREF #PWR?
+U 1 1 622A62C0
+P 2250 2700
+AR Path="/622A62C0" Ref="#PWR?"  Part="1" 
+AR Path="/62292E41/622A62C0" Ref="#PWR02"  Part="1" 
+F 0 "#PWR02" H 2250 2450 50  0001 C CNN
+F 1 "GNDREF" H 2255 2527 50  0001 C CNN
+F 2 "" H 2250 2700 50  0001 C CNN
+F 3 "" H 2250 2700 50  0001 C CNN
+	1    2250 2700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2250 1150 2250 1200
+Wire Wire Line
+	2700 1150 2500 1150
+Wire Wire Line
+	2250 1600 2250 1750
+Connection ~ 2250 1600
+Wire Wire Line
+	2400 1600 2250 1600
+Wire Wire Line
+	2250 1500 2250 1600
+$Comp
+L Device:R_US R?
+U 1 1 622A62CC
+P 2250 2450
+AR Path="/622A62CC" Ref="R?"  Part="1" 
+AR Path="/62292E41/622A62CC" Ref="R2"  Part="1" 
+F 0 "R2" V 2350 2400 50  0000 L CNN
+F 1 "3.3K" H 2000 2450 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 2290 2440 50  0001 C CNN
+F 3 "~" H 2250 2450 50  0001 C CNN
+	1    2250 2450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622A62D2
+P 3100 1850
+AR Path="/622A62D2" Ref="R?"  Part="1" 
+AR Path="/62292E41/622A62D2" Ref="R3"  Part="1" 
+F 0 "R3" V 3200 1800 50  0000 L CNN
+F 1 "22K" V 2950 1750 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 3140 1840 50  0001 C CNN
+F 3 "~" H 3100 1850 50  0001 C CNN
+	1    3100 1850
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:Q_PNP_CBE Q?
+U 1 1 622A62DE
+P 2600 1600
+AR Path="/622A62DE" Ref="Q?"  Part="1" 
+AR Path="/62292E41/622A62DE" Ref="Q2"  Part="1" 
+F 0 "Q2" H 2791 1600 50  0000 L CNN
+F 1 "Q_PNP_CBE" H 2790 1555 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 2800 1700 50  0001 C CNN
+F 3 "~" H 2600 1600 50  0001 C CNN
+	1    2600 1600
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:Q_NPN_CBE Q1
+U 1 1 622A62E4
+P 2150 1950
+F 0 "Q1" H 2340 1950 50  0000 L CNN
+F 1 "Q_NPN_CBE" H 2341 1905 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 2350 2050 50  0001 C CNN
+F 3 "~" H 2150 1950 50  0001 C CNN
+	1    2150 1950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2700 1150 2700 1400
+Wire Wire Line
+	3350 1850 3250 1850
+Wire Wire Line
+	2700 1850 2950 1850
+Wire Wire Line
+	2250 2150 2250 2300
+Wire Wire Line
+	2250 2600 2250 2700
+Wire Wire Line
+	1900 1950 1950 1950
+Text GLabel 4200 3550 2    50   Input ~ 0
+dig1
+$Comp
+L croftj:160V V?
+U 1 1 622AA72F
+P 3350 2650
+AR Path="/622AA72F" Ref="V?"  Part="1" 
+AR Path="/62292E41/622AA72F" Ref="V3"  Part="1" 
+F 0 "V3" H 3300 2550 50  0001 C CNN
+F 1 "160V" H 3250 2650 50  0000 L CNN
+F 2 "" H 3350 2650 50  0001 C CNN
+F 3 "" H 3350 2650 50  0001 C CNN
+	1    3350 2650
+	1    0    0    -1  
+$EndComp
+Text GLabel 2750 3650 0    50   Input ~ 0
+idig1
+Wire Wire Line
+	3350 2850 3100 2850
+Connection ~ 3350 2850
+Wire Wire Line
+	3350 2800 3350 2850
+Wire Wire Line
+	3550 3500 3550 3550
+$Comp
+L power:GNDREF #PWR?
+U 1 1 622AA73A
+P 3100 4400
+AR Path="/622AA73A" Ref="#PWR?"  Part="1" 
+AR Path="/62292E41/622AA73A" Ref="#PWR03"  Part="1" 
+F 0 "#PWR03" H 3100 4150 50  0001 C CNN
+F 1 "GNDREF" H 3105 4227 50  0001 C CNN
+F 2 "" H 3100 4400 50  0001 C CNN
+F 3 "" H 3100 4400 50  0001 C CNN
+	1    3100 4400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3100 2850 3100 2900
+Wire Wire Line
+	3550 2850 3350 2850
+Wire Wire Line
+	3100 3300 3100 3450
+Connection ~ 3100 3300
+Wire Wire Line
+	3250 3300 3100 3300
+Wire Wire Line
+	3100 3200 3100 3300
+$Comp
+L Device:R_US R?
+U 1 1 622AA746
+P 3100 4150
+AR Path="/622AA746" Ref="R?"  Part="1" 
+AR Path="/62292E41/622AA746" Ref="R5"  Part="1" 
+F 0 "R5" V 3200 4100 50  0000 L CNN
+F 1 "3.3K" H 2850 4250 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 3140 4140 50  0001 C CNN
+F 3 "~" H 3100 4150 50  0001 C CNN
+	1    3100 4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622AA74C
+P 3950 3550
+AR Path="/622AA74C" Ref="R?"  Part="1" 
+AR Path="/62292E41/622AA74C" Ref="R6"  Part="1" 
+F 0 "R6" V 4050 3500 50  0000 L CNN
+F 1 "22K" V 3850 3500 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 3990 3540 50  0001 C CNN
+F 3 "~" H 3950 3550 50  0001 C CNN
+	1    3950 3550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622AA752
+P 3100 3050
+AR Path="/622AA752" Ref="R?"  Part="1" 
+AR Path="/62292E41/622AA752" Ref="R4"  Part="1" 
+F 0 "R4" H 3168 3050 50  0000 L CNN
+F 1 "100K" H 2850 3000 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 3140 3040 50  0001 C CNN
+F 3 "~" H 3100 3050 50  0001 C CNN
+	1    3100 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Q_PNP_CBE Q?
+U 1 1 622AA758
+P 3450 3300
+AR Path="/622AA758" Ref="Q?"  Part="1" 
+AR Path="/62292E41/622AA758" Ref="Q4"  Part="1" 
+F 0 "Q4" H 3641 3300 50  0000 L CNN
+F 1 "Q_PNP_CBE" H 3640 3255 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 3650 3400 50  0001 C CNN
+F 3 "~" H 3450 3300 50  0001 C CNN
+	1    3450 3300
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:Q_NPN_CBE Q3
+U 1 1 622AA75E
+P 3000 3650
+F 0 "Q3" H 3190 3650 50  0000 L CNN
+F 1 "Q_NPN_CBE" H 3191 3605 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 3200 3750 50  0001 C CNN
+F 3 "~" H 3000 3650 50  0001 C CNN
+	1    3000 3650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3550 2850 3550 3100
+Wire Wire Line
+	4200 3550 4100 3550
+Wire Wire Line
+	3550 3550 3800 3550
+Wire Wire Line
+	3100 3850 3100 4000
+Wire Wire Line
+	3100 4300 3100 4400
+Wire Wire Line
+	2750 3650 2800 3650
+Text GLabel 3350 6000 2    50   Input ~ 0
+dig2
+$Comp
+L croftj:160V V?
+U 1 1 622B299A
+P 2500 5100
+AR Path="/622B299A" Ref="V?"  Part="1" 
+AR Path="/62292E41/622B299A" Ref="V4"  Part="1" 
+F 0 "V4" H 2450 5000 50  0001 C CNN
+F 1 "160V" H 2400 5100 50  0000 L CNN
+F 2 "" H 2500 5100 50  0001 C CNN
+F 3 "" H 2500 5100 50  0001 C CNN
+	1    2500 5100
+	1    0    0    -1  
+$EndComp
+Text GLabel 1900 6100 0    50   Input ~ 0
+idig2
+Wire Wire Line
+	2500 5300 2250 5300
+Connection ~ 2500 5300
+Wire Wire Line
+	2500 5250 2500 5300
+Wire Wire Line
+	2700 5950 2700 6000
+$Comp
+L power:GNDREF #PWR?
+U 1 1 622B29A5
+P 2250 6850
+AR Path="/622B29A5" Ref="#PWR?"  Part="1" 
+AR Path="/62292E41/622B29A5" Ref="#PWR04"  Part="1" 
+F 0 "#PWR04" H 2250 6600 50  0001 C CNN
+F 1 "GNDREF" H 2255 6677 50  0001 C CNN
+F 2 "" H 2250 6850 50  0001 C CNN
+F 3 "" H 2250 6850 50  0001 C CNN
+	1    2250 6850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2250 5300 2250 5350
+Wire Wire Line
+	2700 5300 2500 5300
+Wire Wire Line
+	2250 5750 2250 5900
+Connection ~ 2250 5750
+Wire Wire Line
+	2400 5750 2250 5750
+Wire Wire Line
+	2250 5650 2250 5750
+$Comp
+L Device:R_US R?
+U 1 1 622B29B7
+P 3100 6000
+AR Path="/622B29B7" Ref="R?"  Part="1" 
+AR Path="/62292E41/622B29B7" Ref="R9"  Part="1" 
+F 0 "R9" V 3200 5950 50  0000 L CNN
+F 1 "22K" V 3000 5950 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 3140 5990 50  0001 C CNN
+F 3 "~" H 3100 6000 50  0001 C CNN
+	1    3100 6000
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622B29BD
+P 2250 5500
+AR Path="/622B29BD" Ref="R?"  Part="1" 
+AR Path="/62292E41/622B29BD" Ref="R7"  Part="1" 
+F 0 "R7" H 2318 5500 50  0000 L CNN
+F 1 "100K" H 2000 5500 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 2290 5490 50  0001 C CNN
+F 3 "~" H 2250 5500 50  0001 C CNN
+	1    2250 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Q_PNP_CBE Q?
+U 1 1 622B29C3
+P 2600 5750
+AR Path="/622B29C3" Ref="Q?"  Part="1" 
+AR Path="/62292E41/622B29C3" Ref="Q6"  Part="1" 
+F 0 "Q6" H 2791 5750 50  0000 L CNN
+F 1 "Q_PNP_CBE" H 2790 5705 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 2800 5850 50  0001 C CNN
+F 3 "~" H 2600 5750 50  0001 C CNN
+	1    2600 5750
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:Q_NPN_CBE Q5
+U 1 1 622B29C9
+P 2150 6100
+F 0 "Q5" H 2340 6100 50  0000 L CNN
+F 1 "Q_NPN_CBE" H 2341 6055 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 2350 6200 50  0001 C CNN
+F 3 "~" H 2150 6100 50  0001 C CNN
+	1    2150 6100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2700 5300 2700 5550
+Wire Wire Line
+	3350 6000 3250 6000
+Wire Wire Line
+	2700 6000 2950 6000
+Wire Wire Line
+	2250 6300 2250 6450
+Wire Wire Line
+	2250 6750 2250 6850
+Wire Wire Line
+	1900 6100 1950 6100
+Text GLabel 6400 1850 2    50   Input ~ 0
+dig3
+$Comp
+L croftj:160V V?
+U 1 1 622E6816
+P 5550 950
+AR Path="/622E6816" Ref="V?"  Part="1" 
+AR Path="/62292E41/622E6816" Ref="V5"  Part="1" 
+F 0 "V5" H 5500 850 50  0001 C CNN
+F 1 "160V" H 5450 950 50  0000 L CNN
+F 2 "" H 5550 950 50  0001 C CNN
+F 3 "" H 5550 950 50  0001 C CNN
+	1    5550 950 
+	1    0    0    -1  
+$EndComp
+Text GLabel 4950 1950 0    50   Input ~ 0
+idig3
+Wire Wire Line
+	5550 1150 5300 1150
+Connection ~ 5550 1150
+Wire Wire Line
+	5550 1100 5550 1150
+Wire Wire Line
+	5750 1800 5750 1850
+$Comp
+L power:GNDREF #PWR?
+U 1 1 622E6821
+P 5300 2700
+AR Path="/622E6821" Ref="#PWR?"  Part="1" 
+AR Path="/62292E41/622E6821" Ref="#PWR05"  Part="1" 
+F 0 "#PWR05" H 5300 2450 50  0001 C CNN
+F 1 "GNDREF" H 5305 2527 50  0001 C CNN
+F 2 "" H 5300 2700 50  0001 C CNN
+F 3 "" H 5300 2700 50  0001 C CNN
+	1    5300 2700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5300 1150 5300 1200
+Wire Wire Line
+	5750 1150 5550 1150
+Wire Wire Line
+	5300 1600 5300 1750
+Connection ~ 5300 1600
+Wire Wire Line
+	5450 1600 5300 1600
+Wire Wire Line
+	5300 1500 5300 1600
+$Comp
+L Device:R_US R?
+U 1 1 622E682D
+P 5300 2450
+AR Path="/622E682D" Ref="R?"  Part="1" 
+AR Path="/62292E41/622E682D" Ref="R11"  Part="1" 
+F 0 "R11" H 5400 2400 50  0000 L CNN
+F 1 "3.3K" H 5050 2450 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 5340 2440 50  0001 C CNN
+F 3 "~" H 5300 2450 50  0001 C CNN
+	1    5300 2450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622E6833
+P 6150 1850
+AR Path="/622E6833" Ref="R?"  Part="1" 
+AR Path="/62292E41/622E6833" Ref="R12"  Part="1" 
+F 0 "R12" V 6250 1800 50  0000 L CNN
+F 1 "22K" V 6050 1800 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 6190 1840 50  0001 C CNN
+F 3 "~" H 6150 1850 50  0001 C CNN
+	1    6150 1850
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622E6839
+P 5300 1350
+AR Path="/622E6839" Ref="R?"  Part="1" 
+AR Path="/62292E41/622E6839" Ref="R10"  Part="1" 
+F 0 "R10" H 5368 1350 50  0000 L CNN
+F 1 "100K" H 5050 1350 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 5340 1340 50  0001 C CNN
+F 3 "~" H 5300 1350 50  0001 C CNN
+	1    5300 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Q_PNP_CBE Q?
+U 1 1 622E683F
+P 5650 1600
+AR Path="/622E683F" Ref="Q?"  Part="1" 
+AR Path="/62292E41/622E683F" Ref="Q8"  Part="1" 
+F 0 "Q8" H 5841 1600 50  0000 L CNN
+F 1 "Q_PNP_CBE" H 5840 1555 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 5850 1700 50  0001 C CNN
+F 3 "~" H 5650 1600 50  0001 C CNN
+	1    5650 1600
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:Q_NPN_CBE Q7
+U 1 1 622E6845
+P 5200 1950
+F 0 "Q7" H 5390 1950 50  0000 L CNN
+F 1 "Q_NPN_CBE" H 5391 1905 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 5400 2050 50  0001 C CNN
+F 3 "~" H 5200 1950 50  0001 C CNN
+	1    5200 1950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5750 1150 5750 1400
+Wire Wire Line
+	6400 1850 6300 1850
+Wire Wire Line
+	5750 1850 6000 1850
+Wire Wire Line
+	5300 2150 5300 2300
+Wire Wire Line
+	5300 2600 5300 2700
+Wire Wire Line
+	4950 1950 5000 1950
+Text GLabel 7250 3550 2    50   Input ~ 0
+dig4
+$Comp
+L croftj:160V V?
+U 1 1 622E6852
+P 6400 2650
+AR Path="/622E6852" Ref="V?"  Part="1" 
+AR Path="/62292E41/622E6852" Ref="V6"  Part="1" 
+F 0 "V6" H 6350 2550 50  0001 C CNN
+F 1 "160V" H 6300 2650 50  0000 L CNN
+F 2 "" H 6400 2650 50  0001 C CNN
+F 3 "" H 6400 2650 50  0001 C CNN
+	1    6400 2650
+	1    0    0    -1  
+$EndComp
+Text GLabel 5800 3650 0    50   Input ~ 0
+idig4
+Wire Wire Line
+	6400 2850 6150 2850
+Connection ~ 6400 2850
+Wire Wire Line
+	6400 2800 6400 2850
+Wire Wire Line
+	6600 3500 6600 3550
+$Comp
+L power:GNDREF #PWR?
+U 1 1 622E685D
+P 6150 4400
+AR Path="/622E685D" Ref="#PWR?"  Part="1" 
+AR Path="/62292E41/622E685D" Ref="#PWR06"  Part="1" 
+F 0 "#PWR06" H 6150 4150 50  0001 C CNN
+F 1 "GNDREF" H 6155 4227 50  0001 C CNN
+F 2 "" H 6150 4400 50  0001 C CNN
+F 3 "" H 6150 4400 50  0001 C CNN
+	1    6150 4400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6150 2850 6150 2900
+Wire Wire Line
+	6600 2850 6400 2850
+Wire Wire Line
+	6150 3300 6150 3450
+Connection ~ 6150 3300
+Wire Wire Line
+	6300 3300 6150 3300
+Wire Wire Line
+	6150 3200 6150 3300
+$Comp
+L Device:R_US R?
+U 1 1 622E6869
+P 6150 4150
+AR Path="/622E6869" Ref="R?"  Part="1" 
+AR Path="/62292E41/622E6869" Ref="R14"  Part="1" 
+F 0 "R14" H 6250 4150 50  0000 L CNN
+F 1 "3.3K" H 5900 4150 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 6190 4140 50  0001 C CNN
+F 3 "~" H 6150 4150 50  0001 C CNN
+	1    6150 4150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622E686F
+P 7000 3550
+AR Path="/622E686F" Ref="R?"  Part="1" 
+AR Path="/62292E41/622E686F" Ref="R15"  Part="1" 
+F 0 "R15" V 7100 3500 50  0000 L CNN
+F 1 "22K" V 6900 3500 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 7040 3540 50  0001 C CNN
+F 3 "~" H 7000 3550 50  0001 C CNN
+	1    7000 3550
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622E6875
+P 6150 3050
+AR Path="/622E6875" Ref="R?"  Part="1" 
+AR Path="/62292E41/622E6875" Ref="R13"  Part="1" 
+F 0 "R13" H 6218 3050 50  0000 L CNN
+F 1 "100K" H 5900 3050 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 6190 3040 50  0001 C CNN
+F 3 "~" H 6150 3050 50  0001 C CNN
+	1    6150 3050
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Q_PNP_CBE Q?
+U 1 1 622E687B
+P 6500 3300
+AR Path="/622E687B" Ref="Q?"  Part="1" 
+AR Path="/62292E41/622E687B" Ref="Q10"  Part="1" 
+F 0 "Q10" H 6691 3300 50  0000 L CNN
+F 1 "Q_PNP_CBE" H 6690 3255 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 6700 3400 50  0001 C CNN
+F 3 "~" H 6500 3300 50  0001 C CNN
+	1    6500 3300
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:Q_NPN_CBE Q9
+U 1 1 622E6881
+P 6050 3650
+F 0 "Q9" H 6240 3650 50  0000 L CNN
+F 1 "Q_NPN_CBE" H 6241 3605 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 6250 3750 50  0001 C CNN
+F 3 "~" H 6050 3650 50  0001 C CNN
+	1    6050 3650
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	6600 2850 6600 3100
+Wire Wire Line
+	7250 3550 7150 3550
+Wire Wire Line
+	6600 3550 6850 3550
+Wire Wire Line
+	6150 3850 6150 4000
+Wire Wire Line
+	6150 4300 6150 4400
+Wire Wire Line
+	5800 3650 5850 3650
+Text GLabel 6350 6000 2    50   Input ~ 0
+dig5
+$Comp
+L croftj:160V V?
+U 1 1 622E688E
+P 5500 5100
+AR Path="/622E688E" Ref="V?"  Part="1" 
+AR Path="/62292E41/622E688E" Ref="V7"  Part="1" 
+F 0 "V7" H 5450 5000 50  0001 C CNN
+F 1 "160V" H 5400 5100 50  0000 L CNN
+F 2 "" H 5500 5100 50  0001 C CNN
+F 3 "" H 5500 5100 50  0001 C CNN
+	1    5500 5100
+	1    0    0    -1  
+$EndComp
+Text GLabel 4900 6100 0    50   Input ~ 0
+idig5
+Wire Wire Line
+	5500 5300 5250 5300
+Connection ~ 5500 5300
+Wire Wire Line
+	5500 5250 5500 5300
+Wire Wire Line
+	5700 5950 5700 6000
+$Comp
+L power:GNDREF #PWR?
+U 1 1 622E6899
+P 5250 6850
+AR Path="/622E6899" Ref="#PWR?"  Part="1" 
+AR Path="/62292E41/622E6899" Ref="#PWR07"  Part="1" 
+F 0 "#PWR07" H 5250 6600 50  0001 C CNN
+F 1 "GNDREF" H 5255 6677 50  0001 C CNN
+F 2 "" H 5250 6850 50  0001 C CNN
+F 3 "" H 5250 6850 50  0001 C CNN
+	1    5250 6850
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5250 5300 5250 5350
+Wire Wire Line
+	5700 5300 5500 5300
+Wire Wire Line
+	5250 5750 5250 5900
+Connection ~ 5250 5750
+Wire Wire Line
+	5400 5750 5250 5750
+Wire Wire Line
+	5250 5650 5250 5750
+$Comp
+L Device:R_US R?
+U 1 1 622E68A5
+P 5250 6600
+AR Path="/622E68A5" Ref="R?"  Part="1" 
+AR Path="/62292E41/622E68A5" Ref="R17"  Part="1" 
+F 0 "R17" H 5350 6600 50  0000 L CNN
+F 1 "3.3K" H 5000 6600 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 5290 6590 50  0001 C CNN
+F 3 "~" H 5250 6600 50  0001 C CNN
+	1    5250 6600
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622E68AB
+P 6100 6000
+AR Path="/622E68AB" Ref="R?"  Part="1" 
+AR Path="/62292E41/622E68AB" Ref="R18"  Part="1" 
+F 0 "R18" V 6200 5950 50  0000 L CNN
+F 1 "22K" V 6000 5950 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 6140 5990 50  0001 C CNN
+F 3 "~" H 6100 6000 50  0001 C CNN
+	1    6100 6000
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622E68B1
+P 5250 5500
+AR Path="/622E68B1" Ref="R?"  Part="1" 
+AR Path="/62292E41/622E68B1" Ref="R16"  Part="1" 
+F 0 "R16" H 5318 5500 50  0000 L CNN
+F 1 "100K" H 5000 5450 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 5290 5490 50  0001 C CNN
+F 3 "~" H 5250 5500 50  0001 C CNN
+	1    5250 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Q_PNP_CBE Q?
+U 1 1 622E68B7
+P 5600 5750
+AR Path="/622E68B7" Ref="Q?"  Part="1" 
+AR Path="/62292E41/622E68B7" Ref="Q12"  Part="1" 
+F 0 "Q12" H 5791 5750 50  0000 L CNN
+F 1 "Q_PNP_CBE" H 5790 5705 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 5800 5850 50  0001 C CNN
+F 3 "~" H 5600 5750 50  0001 C CNN
+	1    5600 5750
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:Q_NPN_CBE Q11
+U 1 1 622E68BD
+P 5150 6100
+F 0 "Q11" H 5340 6100 50  0000 L CNN
+F 1 "Q_NPN_CBE" H 5341 6055 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 5350 6200 50  0001 C CNN
+F 3 "~" H 5150 6100 50  0001 C CNN
+	1    5150 6100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	5700 5300 5700 5550
+Wire Wire Line
+	6350 6000 6250 6000
+Wire Wire Line
+	5700 6000 5950 6000
+Wire Wire Line
+	5250 6300 5250 6450
+Wire Wire Line
+	5250 6750 5250 6850
+Wire Wire Line
+	4900 6100 4950 6100
+Text GLabel 9800 1850 2    50   Input ~ 0
+dig6
+$Comp
+L croftj:160V V?
+U 1 1 622EEC79
+P 8950 950
+AR Path="/622EEC79" Ref="V?"  Part="1" 
+AR Path="/62292E41/622EEC79" Ref="V8"  Part="1" 
+F 0 "V8" H 8900 850 50  0001 C CNN
+F 1 "160V" H 8850 950 50  0000 L CNN
+F 2 "" H 8950 950 50  0001 C CNN
+F 3 "" H 8950 950 50  0001 C CNN
+	1    8950 950 
+	1    0    0    -1  
+$EndComp
+Text GLabel 8350 1950 0    50   Input ~ 0
+idig6
+Wire Wire Line
+	8950 1150 8700 1150
+Connection ~ 8950 1150
+Wire Wire Line
+	8950 1100 8950 1150
+Wire Wire Line
+	9150 1800 9150 1850
+$Comp
+L power:GNDREF #PWR?
+U 1 1 622EEC84
+P 8700 2700
+AR Path="/622EEC84" Ref="#PWR?"  Part="1" 
+AR Path="/62292E41/622EEC84" Ref="#PWR08"  Part="1" 
+F 0 "#PWR08" H 8700 2450 50  0001 C CNN
+F 1 "GNDREF" H 8705 2527 50  0001 C CNN
+F 2 "" H 8700 2700 50  0001 C CNN
+F 3 "" H 8700 2700 50  0001 C CNN
+	1    8700 2700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	8700 1150 8700 1200
+Wire Wire Line
+	9150 1150 8950 1150
+Wire Wire Line
+	8700 1600 8700 1750
+Connection ~ 8700 1600
+Wire Wire Line
+	8850 1600 8700 1600
+Wire Wire Line
+	8700 1500 8700 1600
+$Comp
+L Device:R_US R?
+U 1 1 622EEC90
+P 8700 2450
+AR Path="/622EEC90" Ref="R?"  Part="1" 
+AR Path="/62292E41/622EEC90" Ref="R20"  Part="1" 
+F 0 "R20" H 8800 2400 50  0000 L CNN
+F 1 "3.3K" H 8450 2400 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 8740 2440 50  0001 C CNN
+F 3 "~" H 8700 2450 50  0001 C CNN
+	1    8700 2450
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622EEC96
+P 9550 1850
+AR Path="/622EEC96" Ref="R?"  Part="1" 
+AR Path="/62292E41/622EEC96" Ref="R21"  Part="1" 
+F 0 "R21" V 9650 1800 50  0000 L CNN
+F 1 "35K" V 9450 1750 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 9590 1840 50  0001 C CNN
+F 3 "~" H 9550 1850 50  0001 C CNN
+	1    9550 1850
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622EEC9C
+P 8700 1350
+AR Path="/622EEC9C" Ref="R?"  Part="1" 
+AR Path="/62292E41/622EEC9C" Ref="R19"  Part="1" 
+F 0 "R19" H 8768 1350 50  0000 L CNN
+F 1 "100K" H 8450 1350 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 8740 1340 50  0001 C CNN
+F 3 "~" H 8700 1350 50  0001 C CNN
+	1    8700 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Q_NPN_CBE Q13
+U 1 1 622EECA8
+P 8600 1950
+F 0 "Q13" H 8790 1950 50  0000 L CNN
+F 1 "Q_NPN_CBE" H 8791 1905 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 8800 2050 50  0001 C CNN
+F 3 "~" H 8600 1950 50  0001 C CNN
+	1    8600 1950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9150 1150 9150 1400
+Wire Wire Line
+	9800 1850 9700 1850
+Wire Wire Line
+	9150 1850 9400 1850
+Wire Wire Line
+	8700 2150 8700 2300
+Wire Wire Line
+	8700 2600 8700 2700
+Wire Wire Line
+	8350 1950 8400 1950
+Wire Wire Line
+	1500 4450 1050 4450
+Wire Wire Line
+	1050 4350 1350 4350
+Wire Wire Line
+	1050 4150 1350 4150
+Wire Wire Line
+	1050 4050 1350 4050
+Wire Wire Line
+	1050 3950 1350 3950
+Wire Wire Line
+	1050 3850 1350 3850
+Wire Wire Line
+	1050 3750 1350 3750
+Wire Wire Line
+	1050 3650 1350 3650
+Wire Wire Line
+	1050 3550 1350 3550
+Text GLabel 1350 4350 2    50   Input ~ 0
+VCC
+Text GLabel 1350 4150 2    50   Input ~ 0
+idig6
+Text GLabel 1350 4050 2    50   Input ~ 0
+idig5
+Text GLabel 1350 3950 2    50   Input ~ 0
+idig4
+Text GLabel 1350 3850 2    50   Input ~ 0
+idig3
+Text GLabel 1350 3750 2    50   Input ~ 0
+idig2
+Text GLabel 1350 3650 2    50   Input ~ 0
+idig1
+Text GLabel 1350 3550 2    50   Input ~ 0
+idig0
+$Comp
+L Connector:Conn_01x10_Male J?
+U 1 1 62319D3B
+P 850 3950
+AR Path="/62319D3B" Ref="J?"  Part="1" 
+AR Path="/62292E41/62319D3B" Ref="J2"  Part="1" 
+F 0 "J2" H 822 3878 50  0000 R CNN
+F 1 "Conn_01x10_Male" H 822 3923 50  0001 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x10_P2.54mm_Vertical" H 850 3950 50  0001 C CNN
+F 3 "~" H 850 3950 50  0001 C CNN
+	1    850  3950
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDREF #PWR?
+U 1 1 62319D41
+P 1500 4550
+AR Path="/62319D41" Ref="#PWR?"  Part="1" 
+AR Path="/62292E41/62319D41" Ref="#PWR01"  Part="1" 
+F 0 "#PWR01" H 1500 4300 50  0001 C CNN
+F 1 "GNDREF" H 1505 4377 50  0000 C CNN
+F 2 "" H 1500 4550 50  0001 C CNN
+F 3 "" H 1500 4550 50  0001 C CNN
+	1    1500 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1500 4450 1500 4550
+Text GLabel 1350 4250 2    50   Input ~ 0
+HV_DISABLE
+Wire Wire Line
+	1050 4250 1350 4250
+$Comp
+L Device:R_US R?
+U 1 1 622A62D8
+P 2250 1350
+AR Path="/622A62D8" Ref="R?"  Part="1" 
+AR Path="/62292E41/622A62D8" Ref="R1"  Part="1" 
+F 0 "R1" H 2318 1350 50  0000 L CNN
+F 1 "100K" H 1950 1300 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 2290 1340 50  0001 C CNN
+F 3 "~" H 2250 1350 50  0001 C CNN
+	1    2250 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:Q_PNP_CBE Q?
+U 1 1 622EECA2
+P 9050 1600
+AR Path="/622EECA2" Ref="Q?"  Part="1" 
+AR Path="/62292E41/622EECA2" Ref="Q14"  Part="1" 
+F 0 "Q14" H 9241 1600 50  0000 L CNN
+F 1 "Q_PNP_CBE" H 9240 1555 50  0001 L CNN
+F 2 "Package_TO_SOT_THT:TO-92L_Inline_Wide" H 9250 1700 50  0001 C CNN
+F 3 "~" H 9050 1600 50  0001 C CNN
+	1    9050 1600
+	1    0    0    1   
+$EndComp
+$Comp
+L Device:R_US R?
+U 1 1 622B29B1
+P 2250 6600
+AR Path="/622B29B1" Ref="R?"  Part="1" 
+AR Path="/62292E41/622B29B1" Ref="R8"  Part="1" 
+F 0 "R8" H 2300 6600 50  0000 L CNN
+F 1 "3.3K" H 2000 6600 50  0000 L CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 2290 6590 50  0001 C CNN
+F 3 "~" H 2250 6600 50  0001 C CNN
+	1    2250 6600
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
