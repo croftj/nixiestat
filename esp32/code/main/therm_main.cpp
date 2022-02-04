@@ -13,6 +13,7 @@
 #include <string.h>
 #include <thread>
 
+#include "driver/gpio.h"
 #include "esp_event.h"
 #include "esp_log.h"
 #include "esp_pthread.h"
@@ -37,6 +38,7 @@
 #include "display.h"
 #include "IOPorts.h"
 #include "json11.hpp"
+#include "MPR121.h"
 #include "mqtt_client.h"
 #include "mqtt.h"
 #include "thermostat.h"
@@ -51,6 +53,14 @@
 #define WIFI_CONNECTED_BIT    BIT0
 #define WIFI_FAIL_BIT         BIT1
 #define WIFI_MAXIMUM_RETRY    0
+
+#include "driver/gpio.h"
+
+#define RED_LED_PIN  ((gpio_num_t)26)
+#define GRN_LED_PIN  ((gpio_num_t)21)
+#define KYB_IRQ_PIN  ((gpio_num_t)35)
+#define GPIO_LED_MASK ((1ULL<<GRN_LED_PIN))
+#define GPIO_KBD_MASK ((1ULL<<KYB_IRQ_PIN))
 
 #define CONFIGURATION_TOPIC   "/configure"
 #define TIME_TOPIC            "/time"
@@ -70,6 +80,8 @@ extern *
 void* TempSensorThread(void* arg);
 
 Configuration *config;
+gpio_config_t led_conf;
+gpio_config_t kyb_conf;
 
 static EventGroupHandle_t s_wifi_event_group;
 
@@ -100,7 +112,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
       ESP_LOGI(TAG,"retry wifi connect");
       esp_wifi_connect();
       ESP_LOGI(TAG,"connect to the AP fail");
-//      gpio_set_level(GRN_LED_PIN, 1);
+      gpio_set_level(GRN_LED_PIN, 1);
    }
    else if (event_base == IP_EVENT && event_id == IP_EVENT_STA_GOT_IP)
    {
@@ -109,7 +121,7 @@ static void event_handler(void* arg, esp_event_base_t event_base,
       s_retry_num = 0;
       xEventGroupSetBits(s_wifi_event_group, WIFI_CONNECTED_BIT);
       ESP_LOGI(TAG, "Turning on green LED");
-//      gpio_set_level(GRN_LED_PIN, 0);
+      gpio_set_level(GRN_LED_PIN, 0);
    }
 }
 
@@ -273,6 +285,7 @@ extern "C" void app_main(void)
    Heat->initialize(I2C_NUM_0, 5, 4, 16000);
    Heat->setPort(0xff);
    HVEnable->on();
+   mpr121 = new MPR121(MPR121::OTHER, 0x5a, 0xff, (gpio_num_t)35);
 #endif
 
    esp_log_level_set("*", ESP_LOG_VERBOSE);
@@ -335,6 +348,15 @@ extern "C" void app_main(void)
    pthread_create(&display_thread, NULL, Display::exec, config);
 
 #endif
+
+   led_conf.intr_type = GPIO_INTR_DISABLE;
+   led_conf.mode = GPIO_MODE_OUTPUT;
+   //bit mask of the pins that you want to set,e.g.GPIO18/19
+   led_conf.pin_bit_mask = GPIO_LED_MASK;
+   led_conf.pull_down_en = (gpio_pulldown_t)0;
+   led_conf.pull_up_en = (gpio_pullup_t)0;
+   gpio_config(&led_conf);
+   gpio_set_level(GRN_LED_PIN, 0);
 
 
    /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.

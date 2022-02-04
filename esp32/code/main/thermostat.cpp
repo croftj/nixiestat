@@ -227,7 +227,7 @@ void Thermostat::run()
             { "run_state", (int)run_state}, 
             { "timestamp",  (int)timestamp}
          };
-         mqtt_bus->sendData("thermostat", js.dump().c_str());
+         mqtt_bus->sendData(config->value("mqtt_stat_topic").toString().c_str(), js.dump().c_str());
       }
 //      config->releaseVars();
       old_state = run_state;
@@ -236,7 +236,7 @@ void Thermostat::run()
       if (config->value("send_status").toBool())
       {
          std::string cyc_message = cyc_data.toString();
-         mqtt_bus->sendData("status", cyc_message.c_str());
+         mqtt_bus->sendData(config->value("mqtt_stat_topic").toString().c_str(), cyc_message.c_str());
       }
 //      this_thread::sleep_for(std::chrono::seconds(Configuration::m_sampleInterval.toInt()));
       this_thread::sleep_for(std::chrono::seconds(30));

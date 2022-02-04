@@ -255,7 +255,7 @@ bool TempCycle::call4Heat(bool f, CycleData *cyc_data)
       { "cycle", f ? "On" : "Off"}, 
       { "timestamp",  (int)timestamp}
    };
-   mqtt_bus->sendData("thermostat", js.dump().c_str());
+   mqtt_bus->sendData(config->value("mqtt_furn_topic").toString().c_str(), js.dump().c_str());
 
    if ( ! config->value("rmt_relays").toBool())
    {

@@ -52,6 +52,8 @@ public:
    static Variant m_mqttIdent;
    static Variant m_mqttTopic;
    static Variant m_mqttLogTopic;
+   static Variant m_mqttStatusTopic;
+   static Variant m_mqttFurnaceTopic;
    static Variant m_mqttTempTopic;
    static Variant m_pingTopic;
 
@@ -122,6 +124,11 @@ public:
    static Variant m_cycleMax;
    static Variant m_targetSensor;
 
+   static const char GET_KEYS_CMD[];
+   static const char GET_KNOWN_SENSORS_CMD[];
+
+   std::string get_known_sensors();
+   std::string get_all_keys();
    int CalculateCurrentSetting();
    float getCurrentTempSetting();
    void *process();

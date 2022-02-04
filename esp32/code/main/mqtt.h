@@ -18,7 +18,7 @@ public:
    enum
    {
       TOPIC_LEN = 64,
-      MESG_LEN  = 512
+      MESG_LEN  = 880
    };
 
    typedef class MessageEntry

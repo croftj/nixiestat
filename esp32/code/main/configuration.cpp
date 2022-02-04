@@ -106,7 +106,7 @@ namespace confMenu
    /* Heater Pid Settings */
    /***********************/
    MenuEntry heatingPidMenu((const char*)"PID Settings", (const char*)"heat_pid_set", MenuEntry::SubMenu, &heatingMenu);
-   MenuEntry heatingAdvancedPidMenu((const char*)"AdvancedSettings", (const char*)"heat_pid_advenced", MenuEntry::SubMenu, &heatingPidMenu);
+   MenuEntry heatingAdvancedPidMenu((const char*)"AdvancedSettings", (const char*)"heat_pid_advanced", MenuEntry::SubMenu, &heatingPidMenu);
 
    MenuEntry hpm1((const char*)"Enabled",       (const char*)"heat_pid_en",   MenuEntry::YesNo, &Configuration::m_heatPidEnabled, &heatingPidMenu);
 
@@ -139,7 +139,7 @@ namespace confMenu
    MenuEntry chm00((const char*)"Hystorisis",      (const char*)"cool_hyst", MenuEntry::Float,     &Configuration::m_coolCycleHyst,    &coolingMenu);
 
    MenuEntry coolingPidMenu((const char*)"PID Settings", (const char*)"cool_pid_set", MenuEntry::SubMenu, &coolingMenu);
-   MenuEntry coolingAdvancedPidMenu((const char*)"AdvancedSettings", (const char*)"cool_pid_advenced", MenuEntry::SubMenu, &coolingPidMenu);
+   MenuEntry coolingAdvancedPidMenu((const char*)"AdvancedSettings", (const char*)"cool_pid_advanced", MenuEntry::SubMenu, &coolingPidMenu);
 
    MenuEntry cpm1((const char*)"Enabled",       (const char*)"cool_pid_en",      MenuEntry::YesNo, &Configuration::m_coolPidEnabled, &coolingPidMenu);
 
@@ -172,13 +172,15 @@ namespace confMenu
    /*********************/
    /* MQTT Bus settings */
    /*********************/
-   MenuEntry passEntry((const char*)"MQTT Password",     (const char*)"mqtt_pass",    MenuEntry::String, &Configuration::m_mqttPass,   &mqttMenu);
-   MenuEntry userEntry((const char*)"MQTT User",         (const char*)"mqtt_user",    MenuEntry::String, &Configuration::m_mqttUser,   &mqttMenu);
-   MenuEntry brkrEntry((const char*)"MQTT Broker",       (const char*)"mqtt_broker",  MenuEntry::String, &Configuration::m_mqttBroker, &mqttMenu);
-   MenuEntry ltpcEntry((const char*)"MQTT Log Topic",    (const char*)"mqtt_log_topic",  MenuEntry::String, &Configuration::m_mqttLogTopic,  &mqttMenu);
-   MenuEntry ttpcEntry((const char*)"MQTT Temp Topic",   (const char*)"mqtt_temp_topic", MenuEntry::String, &Configuration::m_mqttTempTopic,  &mqttMenu);
-   MenuEntry pingEntry((const char*)"MQTT Ping Topic",   (const char*)"ping_topic",       MenuEntry::String, &Configuration::m_pingTopic,  &mqttMenu);
-   MenuEntry idntEntry((const char*)"MQTT Identity",     (const char*)"mqtt_ident",      MenuEntry::String, &Configuration::m_mqttIdent,  &mqttMenu);
+   MenuEntry passEntry((const char*)"MQTT Password",        (const char*)"mqtt_pass",        MenuEntry::String, &Configuration::m_mqttPass,   &mqttMenu);
+   MenuEntry userEntry((const char*)"MQTT User",            (const char*)"mqtt_user",        MenuEntry::String, &Configuration::m_mqttUser,   &mqttMenu);
+   MenuEntry brkrEntry((const char*)"MQTT Broker",          (const char*)"mqtt_broker",      MenuEntry::String, &Configuration::m_mqttBroker, &mqttMenu);
+   MenuEntry ltpcEntry((const char*)"MQTT Log Topic",       (const char*)"mqtt_log_topic",   MenuEntry::String, &Configuration::m_mqttLogTopic,  &mqttMenu);
+   MenuEntry stpcEntry((const char*)"MQTT Status Topic",    (const char*)"mqtt_stat_topic",  MenuEntry::String, &Configuration::m_mqttStatusTopic,  &mqttMenu);
+   MenuEntry ftpcEntry((const char*)"MQTT Furnace Topic",   (const char*)"mqtt_furn_topic",  MenuEntry::String, &Configuration::m_mqttFurnaceTopic,  &mqttMenu);
+   MenuEntry ttpcEntry((const char*)"MQTT Temp Topic",      (const char*)"mqtt_temp_topic",  MenuEntry::String, &Configuration::m_mqttTempTopic,  &mqttMenu);
+   MenuEntry pingEntry((const char*)"MQTT Ping Topic",      (const char*)"ping_topic",       MenuEntry::String, &Configuration::m_pingTopic,  &mqttMenu);
+   MenuEntry idntEntry((const char*)"MQTT Identity",        (const char*)"mqtt_ident",       MenuEntry::String, &Configuration::m_mqttIdent,  &mqttMenu);
 }
 
 Variant Configuration::m_ssid;
@@ -190,6 +192,8 @@ Variant Configuration::m_mqttPass;
 Variant Configuration::m_mqttIdent;
 Variant Configuration::m_mqttTopic;
 Variant Configuration::m_mqttLogTopic;
+Variant Configuration::m_mqttStatusTopic;
+Variant Configuration::m_mqttFurnaceTopic;
 Variant Configuration::m_mqttTempTopic;
 Variant Configuration::m_pingTopic;
 
@@ -276,6 +280,8 @@ Variant Configuration::m_cycleMaxTime;
 Variant Configuration::m_cycleMin;
 Variant Configuration::m_cycleMax;
 
+const char Configuration::GET_KEYS_CMD[] = "show_keys";
+const char Configuration::GET_KNOWN_SENSORS_CMD[] = "known_sensors";
 Configuration::SensorDefList_t Configuration::m_sensors;
 
 nvs_handle_t Configuration::m_nvsHandle;
@@ -390,6 +396,8 @@ Configuration::Configuration(uart_port_t port_num) :
    m_defaultValues["ping_topic"]          = string("ping");
    m_defaultValues["mqtt_temp_topic"]     = string("temperature");
    m_defaultValues["mqtt_log_topic"]      = string("log");
+   m_defaultValues["mqtt_stat_topic"]     = string("status");
+   m_defaultValues["mqtt_furn_topic"]     = string("furnace");
    m_defaultValues["sens_port"]           = string("18");
    m_defaultValues["sens_port"]           = string("18");
 
@@ -603,6 +611,38 @@ float Configuration::getCurrentTempSetting()
    }
 #endif
    return(target);
+}
+
+std::string Configuration::get_known_sensors()
+{
+   std::stringstream str_value;
+   SensorData::SensorList_t s_names;
+   s_names = SensorData::getAllSensors();
+
+   str_value << "{\"message_type\" : \"discovery\", \"sensors\" : [";
+   for (auto it = s_names.begin(); it != s_names.end(); ++it)
+   {
+      time_t now;
+      time(&now);
+
+      string name = *it;
+      SensorData sd(SensorData::getSensor(name));
+      float temp = sd.temperature();
+      time_t ts = (time_t)sd.timestamp();
+      time_t age = (time_t)((now - ts) / 24 * 3600);
+      str_value << "{ \"sensor\" : " << "\"" << name << "\", ";
+      str_value << "\"temperature\" : " << temp << ", ";
+      str_value << "\"age\" : " << age << " },\n";
+   }
+   str_value << "] }\n";
+   return(str_value.str());
+}
+
+std::string Configuration::get_all_keys()
+{
+   std::stringstream str_value;
+   MenuEntry::printEntries(str_value);
+   return(str_value.str());
 }
 
 

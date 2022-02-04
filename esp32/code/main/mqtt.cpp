@@ -421,8 +421,21 @@ void* MQTT::procMessages(void *)
             string cmd = js["cmd"].string_value();
             if (cmd.length() > 0)
             {
-               std::string resp = config->execCommand(cmd, true);
-               cout << "menu resp: " << resp << endl;
+               std::string resp;
+               resp.resize(2048);
+               if (cmd == Configuration::GET_KEYS_CMD)
+               {
+                  resp = config->get_all_keys();
+               }
+               else if (cmd == Configuration::GET_KNOWN_SENSORS_CMD)
+               {
+                  resp = config->get_known_sensors();
+               }
+               else
+               {
+                  resp = config->procKeyRequest(cmd, true);
+               }
+               ESP_LOGI(TAG, "menu resp len: %d, str: %s", strlen(resp.c_str()), resp.c_str());
                if (topic.length() > 0)
                {
                   mqtt_bus->sendData(topic, resp);
