@@ -1,4 +1,4 @@
-19769608810705541
+19771321531507541
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -83150,8 +83150,8 @@ in17
 Nixie IN-17
 
 0
-12
-12
+11
+11
 croftj
 micro_jumper
 
@@ -83159,6 +83159,13 @@ micro_jumper
 0
 2
 2
+croftj
+pcb_jack-2x10
+
+
+0
+20
+20
 croftj
 pcb_jack-2x18
 

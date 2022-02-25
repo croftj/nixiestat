@@ -394,17 +394,6 @@ F 3 "" H 2900 2900 50  0001 C CNN
 	-1   0    0    -1  
 $EndComp
 $Comp
-L Connector_Generic:Conn_01x10 J4
-U 1 1 623C0B29
-P 6050 1600
-F 0 "J4" H 6130 1546 50  0000 L CNN
-F 1 "Conn_01x10" H 6130 1501 50  0001 L CNN
-F 2 "croftj:Mill-Max-295x10" H 6050 1600 50  0001 C CNN
-F 3 "~" H 6050 1600 50  0001 C CNN
-	1    6050 1600
-	1    0    0    -1  
-$EndComp
-$Comp
 L power:GNDREF #PWR?
 U 1 1 6238B521
 P 5750 2300
@@ -445,19 +434,6 @@ Text GLabel 5600 4250 0    50   Input ~ 0
 SEG_D_9
 Text GLabel 5600 4350 0    50   Input ~ 0
 SEG_D_10
-$Comp
-L Connector_Generic:Conn_01x10 J?
-U 1 1 6238B509
-P 6050 3850
-AR Path="/6238B509" Ref="J?"  Part="1" 
-AR Path="/62313FED/6238B509" Ref="J3"  Part="1" 
-F 0 "J3" H 6130 3796 50  0000 L CNN
-F 1 "Conn_01x10" H 6130 3751 50  0001 L CNN
-F 2 "croftj:Mill-Max-295x10" H 6050 3850 50  0001 C CNN
-F 3 "~" H 6050 3850 50  0001 C CNN
-	1    6050 3850
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5600 3450 5850 3450
 Wire Wire Line
@@ -572,31 +548,164 @@ Wire Wire Line
 Wire Wire Line
 	5650 2000 5850 2000
 $Comp
-L croftj:3.3V V?
-U 1 1 6255DC63
-P 3650 1550
-AR Path="/6255DC63" Ref="V?"  Part="1" 
-AR Path="/62313FED/6255DC63" Ref="V11"  Part="1" 
-F 0 "V11" H 3600 1450 50  0001 C CNN
-F 1 "3.3V" H 3650 1550 50  0000 C CNN
-F 2 "" H 3650 1550 50  0001 C CNN
-F 3 "" H 3650 1550 50  0001 C CNN
-	1    3650 1550
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3650 1800 4250 1800
-Wire Wire Line
-	3650 1700 3650 1800
-$Comp
-L croftj:VCC V?
+L croftj:VCC V14
 U 1 1 61E55107
 P 5650 800
-F 0 "V?" H 5550 700 50  0001 C CNN
+F 0 "V14" H 5550 700 50  0001 C CNN
 F 1 "VCC" H 5600 800 50  0000 L CNN
 F 2 "" H 5500 850 50  0001 C CNN
 F 3 "" H 5500 850 50  0001 C CNN
 	1    5650 800 
 	1    0    0    -1  
 $EndComp
+Text GLabel 4150 1800 0    50   Input ~ 0
+RESET
+Wire Wire Line
+	4150 1800 4250 1800
+$Comp
+L Connector_Generic:Conn_02x10_Odd_Even J3
+U 1 1 623DCFF5
+P 6050 1600
+F 0 "J3" H 6100 2125 50  0000 C CNN
+F 1 "Conn_02x10_Odd_Even" H 6100 2126 50  0001 C CNN
+F 2 "croftj:pcb_jack-2x10" H 6050 1600 50  0001 C CNN
+F 3 "~" H 6050 1600 50  0001 C CNN
+	1    6050 1600
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDREF #PWR?
+U 1 1 623DF10F
+P 6450 2300
+AR Path="/623DF10F" Ref="#PWR?"  Part="1" 
+AR Path="/62313FED/623DF10F" Ref="#PWR0122"  Part="1" 
+F 0 "#PWR0122" H 6450 2050 50  0001 C CNN
+F 1 "GNDREF" H 6455 2127 50  0001 C CNN
+F 2 "" H 6450 2300 50  0001 C CNN
+F 3 "" H 6450 2300 50  0001 C CNN
+	1    6450 2300
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	6450 2100 6450 2300
+Wire Wire Line
+	6350 2100 6450 2100
+Wire Wire Line
+	6450 2100 6450 2000
+Wire Wire Line
+	6450 2000 6350 2000
+Connection ~ 6450 2100
+Wire Wire Line
+	6450 2000 6450 1900
+Wire Wire Line
+	6450 1900 6350 1900
+Wire Wire Line
+	6450 1900 6450 1800
+Wire Wire Line
+	6450 1800 6350 1800
+Wire Wire Line
+	6450 1800 6450 1700
+Wire Wire Line
+	6450 1700 6350 1700
+Wire Wire Line
+	6450 1700 6450 1600
+Wire Wire Line
+	6450 1600 6350 1600
+Wire Wire Line
+	6450 1600 6450 1500
+Wire Wire Line
+	6450 1500 6350 1500
+Wire Wire Line
+	6450 1500 6450 1400
+Wire Wire Line
+	6450 1400 6350 1400
+Wire Wire Line
+	6450 1400 6450 1300
+Wire Wire Line
+	6450 1300 6350 1300
+Wire Wire Line
+	6450 1300 6450 1200
+Wire Wire Line
+	6450 1200 6350 1200
+Connection ~ 6450 1300
+Connection ~ 6450 1400
+Connection ~ 6450 1500
+Connection ~ 6450 1600
+Connection ~ 6450 1700
+Connection ~ 6450 1800
+Connection ~ 6450 1900
+Connection ~ 6450 2000
+$Comp
+L Connector_Generic:Conn_02x10_Odd_Even J4
+U 1 1 623F7AD0
+P 6050 3850
+F 0 "J4" H 6100 4375 50  0000 C CNN
+F 1 "Conn_02x10_Odd_Even" H 6100 4376 50  0001 C CNN
+F 2 "croftj:pcb_jack-2x10-mirror" H 6050 3850 50  0001 C CNN
+F 3 "~" H 6050 3850 50  0001 C CNN
+	1    6050 3850
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDREF #PWR?
+U 1 1 623F7AD6
+P 6450 4550
+AR Path="/623F7AD6" Ref="#PWR?"  Part="1" 
+AR Path="/62313FED/623F7AD6" Ref="#PWR0123"  Part="1" 
+F 0 "#PWR0123" H 6450 4300 50  0001 C CNN
+F 1 "GNDREF" H 6455 4377 50  0001 C CNN
+F 2 "" H 6450 4550 50  0001 C CNN
+F 3 "" H 6450 4550 50  0001 C CNN
+	1    6450 4550
+	-1   0    0    -1  
+$EndComp
+Wire Wire Line
+	6450 4350 6450 4550
+Wire Wire Line
+	6350 4350 6450 4350
+Wire Wire Line
+	6450 4350 6450 4250
+Wire Wire Line
+	6450 4250 6350 4250
+Connection ~ 6450 4350
+Wire Wire Line
+	6450 4250 6450 4150
+Wire Wire Line
+	6450 4150 6350 4150
+Wire Wire Line
+	6450 4150 6450 4050
+Wire Wire Line
+	6450 4050 6350 4050
+Wire Wire Line
+	6450 4050 6450 3950
+Wire Wire Line
+	6450 3950 6350 3950
+Wire Wire Line
+	6450 3950 6450 3850
+Wire Wire Line
+	6450 3850 6350 3850
+Wire Wire Line
+	6450 3850 6450 3750
+Wire Wire Line
+	6450 3750 6350 3750
+Wire Wire Line
+	6450 3750 6450 3650
+Wire Wire Line
+	6450 3650 6350 3650
+Wire Wire Line
+	6450 3650 6450 3550
+Wire Wire Line
+	6450 3550 6350 3550
+Wire Wire Line
+	6450 3550 6450 3450
+Wire Wire Line
+	6450 3450 6350 3450
+Connection ~ 6450 3550
+Connection ~ 6450 3650
+Connection ~ 6450 3750
+Connection ~ 6450 3850
+Connection ~ 6450 3950
+Connection ~ 6450 4050
+Connection ~ 6450 4150
+Connection ~ 6450 4250
 $EndSCHEMATC

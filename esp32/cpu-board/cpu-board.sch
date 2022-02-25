@@ -266,15 +266,15 @@ Connection ~ 1500 1200
 $Comp
 L croftj:3.3V V2
 U 1 1 60C5D7FA
-P 2100 4300
-F 0 "V2" H 2050 4200 50  0001 C CNN
-F 1 "3.3V" H 2200 4200 50  0001 C CNN
-F 2 "" H 2100 4300 50  0001 C CNN
-F 3 "" H 2100 4300 50  0001 C CNN
-	1    2100 4300
+P 1500 4300
+F 0 "V2" H 1450 4200 50  0001 C CNN
+F 1 "3.3V" H 1600 4200 50  0001 C CNN
+F 2 "" H 1500 4300 50  0001 C CNN
+F 3 "" H 1500 4300 50  0001 C CNN
+	1    1500 4300
 	1    0    0    -1  
 $EndComp
-Text Notes 2000 4350 0    50   ~ 0
+Text Notes 1400 4350 0    50   ~ 0
 3.3V
 $Comp
 L Jumper:SolderJumper_3_Bridged12 JP1
@@ -534,19 +534,6 @@ Text GLabel 8650 2150 0    50   Input ~ 0
 HEAT
 Text GLabel 8650 1850 0    50   Input ~ 0
 VALVE
-$Comp
-L croftj:3.3V V4
-U 1 1 6110DE15
-P 9150 1450
-F 0 "V4" H 9100 1350 50  0001 C CNN
-F 1 "3.3V" H 9150 1450 50  0000 C CNN
-F 2 "" H 9150 1450 50  0001 C CNN
-F 3 "" H 9150 1450 50  0001 C CNN
-	1    9150 1450
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	9150 1600 9150 1750
 Wire Wire Line
 	9150 1750 9700 1750
 $Comp
@@ -705,14 +692,12 @@ Text GLabel 9250 3100 0    50   Input ~ 0
 I2C_SCL
 Text GLabel 9250 3200 0    50   Input ~ 0
 I2C_SDA
-Text GLabel 3550 4950 2    50   Input ~ 0
+Text GLabel 5000 4950 2    50   Input ~ 0
 I2C_SCL
-Text GLabel 3550 5050 2    50   Input ~ 0
+Text GLabel 5000 5200 2    50   Input ~ 0
 I2C_SDA
 Wire Wire Line
-	2950 4950 3150 4950
-Wire Wire Line
-	3550 5050 3400 5050
+	4050 5200 3900 5200
 Wire Wire Line
 	9700 3300 9600 3300
 Wire Wire Line
@@ -826,57 +811,8 @@ Text Notes 3600 7000 0    50   ~ 0
 3.3V
 Wire Wire Line
 	3700 7100 3700 7150
-$Comp
-L croftj:3.3V V5
-U 1 1 61ADC028
-P 5250 6050
-F 0 "V5" H 5200 5950 50  0001 C CNN
-F 1 "3.3V" H 5350 5950 50  0001 C CNN
-F 2 "" H 5250 6050 50  0001 C CNN
-F 3 "" H 5250 6050 50  0001 C CNN
-	1    5250 6050
-	1    0    0    -1  
-$EndComp
-Text Notes 5150 6100 0    50   ~ 0
-3.3V
-Wire Wire Line
-	5250 6200 5250 6250
-Wire Wire Line
-	5250 6250 5600 6250
-$Comp
-L Connector:TestPoint TP2
-U 1 1 61C8B90A
-P 3150 4600
-F 0 "TP2" H 3208 4718 50  0000 L CNN
-F 1 "SCL" H 3208 4627 50  0000 L CNN
-F 2 "Connector_Pin:Pin_D1.3mm_L11.0mm" H 3350 4600 50  0001 C CNN
-F 3 "~" H 3350 4600 50  0001 C CNN
-	1    3150 4600
-	1    0    0    -1  
-$EndComp
-$Comp
-L Connector:TestPoint TP3
-U 1 1 61CA27E5
-P 3400 4600
-F 0 "TP3" H 3458 4718 50  0000 L CNN
-F 1 "SDA" H 3458 4627 50  0000 L CNN
-F 2 "Connector_Pin:Pin_D1.3mm_L11.0mm" H 3600 4600 50  0001 C CNN
-F 3 "~" H 3600 4600 50  0001 C CNN
-	1    3400 4600
-	1    0    0    -1  
-$EndComp
-Wire Wire Line
-	3400 4600 3400 5050
-Wire Wire Line
-	3400 5050 2950 5050
-Wire Wire Line
-	3150 4600 3150 4950
-Wire Wire Line
-	3150 4950 3550 4950
 Wire Wire Line
 	2100 4450 2100 4600
-Connection ~ 3150 4950
-Connection ~ 3400 5050
 $Comp
 L Device:C C9
 U 1 1 61E42E4D
@@ -1030,7 +966,7 @@ Connection ~ 3750 3850
 Wire Wire Line
 	3750 3850 3750 3950
 $Sheet
-S 10050 4900 750  950 
+S 8450 4950 750  950 
 U 62313FED
 F0 "IODrivers" 50
 F1 "IODrivers.sch" 50
@@ -1039,23 +975,6 @@ Wire Wire Line
 	5950 6550 5950 6700
 Wire Wire Line
 	6500 4600 6500 4700
-Wire Wire Line
-	5800 4300 6150 4300
-Wire Wire Line
-	5800 4250 5800 4300
-Text Notes 5700 4150 0    50   ~ 0
-3.3V
-$Comp
-L croftj:3.3V V9
-U 1 1 61AF2737
-P 5800 4100
-F 0 "V9" H 5750 4000 50  0001 C CNN
-F 1 "3.3V" H 5900 4000 50  0001 C CNN
-F 2 "" H 5800 4100 50  0001 C CNN
-F 3 "" H 5800 4100 50  0001 C CNN
-	1    5800 4100
-	1    0    0    -1  
-$EndComp
 Wire Wire Line
 	5950 3800 5700 3800
 Wire Wire Line
@@ -1184,10 +1103,10 @@ Wire Wire Line
 Wire Wire Line
 	7600 3700 7900 3700
 $Comp
-L croftj:VCC V?
+L croftj:VCC V4
 U 1 1 61E47E6F
 P 5350 650
-F 0 "V?" H 5250 550 50  0001 C CNN
+F 0 "V4" H 5250 550 50  0001 C CNN
 F 1 "VCC" H 5300 650 50  0000 L CNN
 F 2 "" H 5200 700 50  0001 C CNN
 F 3 "" H 5200 700 50  0001 C CNN
@@ -1196,4 +1115,328 @@ F 3 "" H 5200 700 50  0001 C CNN
 $EndComp
 Wire Wire Line
 	5350 800  5350 900 
+$Comp
+L croftj:VCC V8
+U 1 1 61F2569E
+P 9150 1350
+F 0 "V8" H 9050 1250 50  0001 C CNN
+F 1 "VCC" H 9100 1350 50  0000 L CNN
+F 2 "" H 9000 1400 50  0001 C CNN
+F 3 "" H 9000 1400 50  0001 C CNN
+	1    9150 1350
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	9150 1500 9150 1750
+$Comp
+L Device:C C4
+U 1 1 621A9CBD
+P 900 4900
+F 0 "C4" H 1015 4946 50  0000 L CNN
+F 1 ".1uf" H 1015 4855 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 938 4750 50  0001 C CNN
+F 3 "~" H 900 4900 50  0001 C CNN
+	1    900  4900
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1200 4750 900  4750
+$Comp
+L power:GNDREF #PWR0118
+U 1 1 621BFC32
+P 900 5100
+F 0 "#PWR0118" H 900 4850 50  0001 C CNN
+F 1 "GNDREF" H 905 4927 50  0001 C CNN
+F 2 "" H 900 5100 50  0001 C CNN
+F 3 "" H 900 5100 50  0001 C CNN
+	1    900  5100
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	900  5050 900  5100
+Text GLabel 850  4750 0    50   Input ~ 0
+RESET
+Wire Wire Line
+	850  4750 900  4750
+Connection ~ 900  4750
+Text GLabel 6050 4300 0    50   Input ~ 0
+RESET
+Wire Wire Line
+	6050 4300 6150 4300
+Text GLabel 5500 6250 0    50   Input ~ 0
+RESET
+Wire Wire Line
+	5500 6250 5600 6250
+$Comp
+L Jumper:Jumper_2_Bridged JP9
+U 1 1 6222353A
+P 1800 4450
+F 0 "JP9" H 1800 4553 50  0000 C CNN
+F 1 "Jumper_2_Bridged" H 1800 4554 50  0001 C CNN
+F 2 "Jumper:SolderJumper-2_P1.3mm_Bridged_RoundedPad1.0x1.5mm" H 1800 4450 50  0001 C CNN
+F 3 "~" H 1800 4450 50  0001 C CNN
+	1    1800 4450
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	1600 4450 1500 4450
+Wire Wire Line
+	2000 4450 2100 4450
+$Comp
+L croftj:ScrewHole SH3
+U 1 1 622C13E8
+P 10450 5100
+F 0 "SH3" H 10450 5100 50  0001 C CNN
+F 1 "ScrewHole" H 10528 4955 50  0001 L CNN
+F 2 "croftj:4-40-Screw" H 10450 5100 50  0001 C CNN
+F 3 "" H 10450 5100 50  0001 C CNN
+	1    10450 5100
+	1    0    0    -1  
+$EndComp
+$Comp
+L croftj:ScrewHole SH4
+U 1 1 622C1D1C
+P 10450 5350
+F 0 "SH4" H 10450 5350 50  0001 C CNN
+F 1 "ScrewHole" H 10528 5205 50  0001 L CNN
+F 2 "croftj:4-40-Screw" H 10450 5350 50  0001 C CNN
+F 3 "" H 10450 5350 50  0001 C CNN
+	1    10450 5350
+	1    0    0    -1  
+$EndComp
+$Comp
+L croftj:ScrewHole SH2
+U 1 1 622D8236
+P 10050 5650
+F 0 "SH2" H 10050 5650 50  0001 C CNN
+F 1 "ScrewHole" H 10128 5505 50  0001 L CNN
+F 2 "croftj:4-40-Screw" H 10050 5650 50  0001 C CNN
+F 3 "" H 10050 5650 50  0001 C CNN
+	1    10050 5650
+	-1   0    0    1   
+$EndComp
+$Comp
+L croftj:ScrewHole SH1
+U 1 1 622D823C
+P 10050 5400
+F 0 "SH1" H 10050 5400 50  0001 C CNN
+F 1 "ScrewHole" H 10128 5255 50  0001 L CNN
+F 2 "croftj:4-40-Screw" H 10050 5400 50  0001 C CNN
+F 3 "" H 10050 5400 50  0001 C CNN
+	1    10050 5400
+	-1   0    0    1   
+$EndComp
+Wire Wire Line
+	10150 5250 10250 5250
+Wire Wire Line
+	10150 5500 10250 5500
+Wire Wire Line
+	10250 5250 10250 5500
+Connection ~ 10250 5250
+Wire Wire Line
+	10250 5250 10350 5250
+Connection ~ 10250 5500
+Wire Wire Line
+	10250 5500 10350 5500
+Wire Wire Line
+	10250 5500 10250 5600
+$Comp
+L power:GNDREF #PWR0121
+U 1 1 62326D38
+P 10250 5600
+F 0 "#PWR0121" H 10250 5350 50  0001 C CNN
+F 1 "GNDREF" H 10255 5427 50  0001 C CNN
+F 2 "" H 10250 5600 50  0001 C CNN
+F 3 "" H 10250 5600 50  0001 C CNN
+	1    10250 5600
+	1    0    0    -1  
+$EndComp
+Text Notes 10150 5150 0    50   ~ 0
+Screw\nHoles
+Wire Notes Line
+	9900 4950 10600 4950
+Wire Notes Line
+	10600 4950 10600 5800
+Wire Notes Line
+	10600 5800 9900 5800
+Wire Notes Line
+	9900 5800 9900 4950
+$Comp
+L Device:C C6
+U 1 1 62422876
+P 3900 5750
+F 0 "C6" H 4015 5796 50  0000 L CNN
+F 1 ".1uf" H 4015 5705 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 3938 5600 50  0001 C CNN
+F 3 "~" H 3900 5750 50  0001 C CNN
+	1    3900 5750
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDREF #PWR0124
+U 1 1 6242287C
+P 3900 5950
+F 0 "#PWR0124" H 3900 5700 50  0001 C CNN
+F 1 "GNDREF" H 3905 5777 50  0001 C CNN
+F 2 "" H 3900 5950 50  0001 C CNN
+F 3 "" H 3900 5950 50  0001 C CNN
+	1    3900 5950
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	3900 5900 3900 5950
+$Comp
+L Device:R_US R7
+U 1 1 6245D02A
+P 4200 4950
+F 0 "R7" V 3995 4950 50  0000 C CNN
+F 1 "0 Ohm" V 4086 4950 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 4240 4940 50  0001 C CNN
+F 3 "~" H 4200 4950 50  0001 C CNN
+	1    4200 4950
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_US R8
+U 1 1 6245E3A6
+P 4200 5200
+F 0 "R8" V 4400 5200 50  0000 C CNN
+F 1 "0 Ohm" V 4300 5200 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 4240 5190 50  0001 C CNN
+F 3 "~" H 4200 5200 50  0001 C CNN
+	1    4200 5200
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:R_US R5
+U 1 1 6249D964
+P 4550 4550
+F 0 "R5" H 4400 4600 50  0000 C CNN
+F 1 "100K" H 4400 4500 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 4590 4540 50  0001 C CNN
+F 3 "~" H 4550 4550 50  0001 C CNN
+	1    4550 4550
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R_US R6
+U 1 1 6249D96A
+P 4750 4550
+F 0 "R6" H 4850 4600 50  0000 C CNN
+F 1 "100K" H 4900 4500 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 4790 4540 50  0001 C CNN
+F 3 "~" H 4750 4550 50  0001 C CNN
+	1    4750 4550
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4550 4700 4550 4950
+Wire Wire Line
+	3900 5200 3900 5600
+Wire Wire Line
+	3400 5050 3400 5200
+Connection ~ 3900 5200
+Wire Wire Line
+	3400 5200 3900 5200
+Wire Wire Line
+	3500 5600 3500 4950
+Wire Wire Line
+	3500 5900 3500 5950
+$Comp
+L power:GNDREF #PWR0125
+U 1 1 624156B2
+P 3500 5950
+F 0 "#PWR0125" H 3500 5700 50  0001 C CNN
+F 1 "GNDREF" H 3505 5777 50  0001 C CNN
+F 2 "" H 3500 5950 50  0001 C CNN
+F 3 "" H 3500 5950 50  0001 C CNN
+	1    3500 5950
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C5
+U 1 1 624156AC
+P 3500 5750
+F 0 "C5" H 3615 5796 50  0000 L CNN
+F 1 ".1uf" H 3615 5705 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric_Pad1.18x1.45mm_HandSolder" H 3538 5600 50  0001 C CNN
+F 3 "~" H 3500 5750 50  0001 C CNN
+	1    3500 5750
+	1    0    0    -1  
+$EndComp
+Connection ~ 3500 4950
+Wire Wire Line
+	4750 4700 4750 5200
+$Comp
+L croftj:3.3V V5
+U 1 1 62535ABC
+P 4650 4200
+F 0 "V5" H 4600 4100 50  0001 C CNN
+F 1 "3.3V" H 4750 4100 50  0001 C CNN
+F 2 "" H 4650 4200 50  0001 C CNN
+F 3 "" H 4650 4200 50  0001 C CNN
+	1    4650 4200
+	1    0    0    -1  
+$EndComp
+Text Notes 4550 4250 0    50   ~ 0
+3.3V
+Wire Wire Line
+	4750 4350 4650 4350
+Wire Wire Line
+	4750 4350 4750 4400
+Wire Wire Line
+	4650 4350 4550 4350
+Wire Wire Line
+	4550 4350 4550 4400
+Connection ~ 4650 4350
+$Comp
+L Connector:TestPoint TP3
+U 1 1 61CA27E5
+P 10650 3500
+F 0 "TP3" H 10708 3618 50  0000 L CNN
+F 1 "SDA" H 10708 3527 50  0000 L CNN
+F 2 "Connector_Pin:Pin_D1.3mm_L11.0mm" H 10850 3500 50  0001 C CNN
+F 3 "~" H 10850 3500 50  0001 C CNN
+	1    10650 3500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Connector:TestPoint TP2
+U 1 1 61C8B90A
+P 10400 3500
+F 0 "TP2" H 10458 3618 50  0000 L CNN
+F 1 "SCL" H 10458 3527 50  0000 L CNN
+F 2 "Connector_Pin:Pin_D1.3mm_L11.0mm" H 10600 3500 50  0001 C CNN
+F 3 "~" H 10600 3500 50  0001 C CNN
+	1    10400 3500
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10650 3500 10650 4300
+Wire Wire Line
+	3400 5050 2950 5050
+Wire Wire Line
+	10400 3500 10400 4200
+Wire Wire Line
+	3500 4950 4050 4950
+Wire Wire Line
+	4350 4950 4550 4950
+Connection ~ 4550 4950
+Wire Wire Line
+	4550 4950 5000 4950
+Wire Wire Line
+	4350 5200 4750 5200
+Connection ~ 4750 5200
+Wire Wire Line
+	4750 5200 5000 5200
+Wire Wire Line
+	2950 4950 3500 4950
+Wire Wire Line
+	10650 4300 9950 4300
+Wire Wire Line
+	10400 4200 9950 4200
+Text GLabel 9950 4200 0    50   Input ~ 0
+I2C_SCL
+Text GLabel 9950 4300 0    50   Input ~ 0
+I2C_SDA
 $EndSCHEMATC
