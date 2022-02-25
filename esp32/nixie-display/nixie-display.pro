@@ -1,4 +1,4 @@
-update=Sun 30 Jan 2022 09:24:06 AM CST
+update=Wed 23 Feb 2022 04:14:37 PM CST
 version=1
 last_client=kicad
 [general]
@@ -23,7 +23,7 @@ AllowBlindVias=0
 RequireCourtyardDefinitions=0
 ProhibitOverlappingCourtyards=1
 MinTrackWidth=0.152
-MinViaDiameter=0.4
+MinViaDiameter=0.3
 MinViaDrill=0.3
 MinMicroViaDiameter=0.2
 MinMicroViaDrill=0.09999999999999999
@@ -38,7 +38,9 @@ TrackWidth7=1
 ViaDiameter1=0.8
 ViaDrill1=0.4
 ViaDiameter2=0.5
-ViaDrill2=0.3
+ViaDrill2=0.300228
+ViaDiameter3=6.604
+ViaDrill3=3.2512
 dPairWidth1=0.2
 dPairGap1=0.25
 dPairViaGap1=0.25
@@ -243,6 +245,17 @@ uViaDiameter=0.3
 uViaDrill=0.1
 dPairWidth=0.2
 dPairGap=0.25
+dPairViaGap=0.25
+[pcbnew/Netclasses/1]
+Name=HiVolt
+Clearance=0.762
+TrackWidth=0.25
+ViaDiameter=0.8
+ViaDrill=0.4
+uViaDiameter=0.3
+uViaDrill=0.1
+dPairWidth=0.508
+dPairGap=0.508
 dPairViaGap=0.25
 [schematic_editor]
 version=1
