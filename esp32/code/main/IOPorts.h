@@ -10,7 +10,9 @@ namespace IOPorts
       SEGS_LSB = 0x56,
       SEGS_MSB = 0x57,
       RELAYS   = 0x57,
-      DIGITS   = 0x58
+      DIGITS   = 0x58,
+      NUM_DIGITS   = 7,
+      NUM_SEGMENTS = 10
    };
 }
 
@@ -32,7 +34,7 @@ extern MAX7320* Fan;
 extern MAX7320* Valve;
 extern MAX7320* HVEnable;
 
-#if 0
+#if 1
 extern MAX7320* Digits[];
 extern MAX7320* Segments[];
 #endif

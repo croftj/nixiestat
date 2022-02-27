@@ -61,6 +61,13 @@ public:
    Display();
    
    void init();
+   void digitsOff();
+   void digitOn(int digit);
+   bool disable();
+   void segmentsOff();
+   void segmentOn(int segment);
+   void touch();
+
 
    void setm_speed(uint16_t spd)
    {
@@ -95,7 +102,7 @@ public:
          digitBlankMask &= ~digits;
    };
 
-   void clearm_lamps()
+   void clear_lamps()
    {
       m_lamps = 0;
       m_lampFlashMask = 0;
@@ -123,8 +130,6 @@ public:
          m_lampFlashMask &= ~m_lamps;
    };
 
-   void touch();
-
    bool isEnabled()
    {
       return(m_enabled);
@@ -144,8 +149,6 @@ public:
       }
       return(rv);
    }
-
-   bool disable();
 
    void setEnableIdleTime(uint16_t val)
    {

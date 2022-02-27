@@ -35,6 +35,7 @@
 #include "mqtt_client.h"
 
 #include "configuration.h"
+#include "display.h"
 #include "json11.hpp"
 #include "SensorData.h"
 #include "thermostat.h"
@@ -46,6 +47,10 @@
 
 #define CONFIGURATION_TOPIC   "/configure"
 #define TIME_TOPIC            "/time"
+
+#define CMD_DISPLAY_ENABLE "display_enb"
+#define CMD_DIGIT_ON       "digit_ctl"
+#define CMD_SEGMENT_ON       "segment_ctl"
 
 using namespace std;
 using namespace json11;
@@ -426,6 +431,47 @@ void* MQTT::procMessages(void *)
                if (cmd == Configuration::GET_KEYS_CMD)
                {
                   resp = config->get_all_keys();
+               }
+               else if (cmd == CMD_DISPLAY_ENABLE)
+               {
+                  string state = js["state"].string_value();
+                  ESP_LOGI(TAG, "state = %s", state.c_str());
+                  if (state == "true")
+                  {
+                     ESP_LOGI(TAG, "Enabling HV");
+                     display->touch();
+                  }
+                  else
+                  {
+                     ESP_LOGI(TAG, "Disabling HV");
+                     display->disable();
+                  }
+               }
+               else if (cmd == CMD_SEGMENT_ON)
+               {
+                  int segment = js["segment"].int_value();
+                  ESP_LOGI(TAG, "segment = %d", segment);
+                  if (segment  < IOPorts::NUM_SEGMENTS)
+                  {
+                     display->segmentOn(segment);
+                  }
+                  else
+                  {
+                     display->segmentsOff();
+                  }
+               }
+               else if (cmd == CMD_DIGIT_ON)
+               {
+                  int digit = js["digit"].int_value();
+                  ESP_LOGI(TAG, "digit = %d", digit);
+                  if (digit  < IOPorts::NUM_DIGITS)
+                  {
+                     display->digitOn(digit);
+                  }
+                  else
+                  {
+                     display->digitsOff();
+                  }
                }
                else if (cmd == Configuration::GET_KNOWN_SENSORS_CMD)
                {

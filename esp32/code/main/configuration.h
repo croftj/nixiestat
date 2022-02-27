@@ -123,6 +123,7 @@ public:
    static Variant m_cycleMin;
    static Variant m_cycleMax;
    static Variant m_targetSensor;
+   static Variant m_overideOffset;
 
    static const char GET_KEYS_CMD[];
    static const char GET_KNOWN_SENSORS_CMD[];

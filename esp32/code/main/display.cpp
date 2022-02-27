@@ -9,6 +9,8 @@
 
 #define  FLASH_VALUE    90
 
+#define TAG __PRETTY_FUNCTION__
+
 Display* display = new Display;
 
 Display::Display()
@@ -36,20 +38,20 @@ void Display::init()
 
 void *Display::exec(void*)
 {
-#if 0
+#if 1
    std::this_thread::sleep_for(std::chrono::seconds(2));
    Digits[0]->off();
    Digits[1]->off();
-   Digits[2]->on();
+   Digits[2]->off();
    Digits[3]->off();
-   Digits[5]->off();
+   Digits[5]->on();
    Digits[6]->off();
    Segments[0]->off();
    Segments[1]->off();
-   Segments[2]->on();
+   Segments[2]->off();
    Segments[3]->off();
    Segments[4]->off();
-   Segments[5]->off();
+   Segments[5]->on();
    Segments[6]->off();
    Segments[7]->off();
    Segments[8]->off();
@@ -57,8 +59,8 @@ void *Display::exec(void*)
 #endif
    while (true)
    {
-      display->loop();
-      std::this_thread::sleep_for(std::chrono::milliseconds(600));
+//      display->loop();
+      std::this_thread::sleep_for(std::chrono::milliseconds(50));
    }
    return(NULL);
 }
@@ -66,8 +68,9 @@ void *Display::exec(void*)
 void Display::loop()
 {
    bool showDigit;
+   ESP_LOGI(TAG, "Enter");
 #if 0
-   if ( true || ! m_enabled ) 
+   if ( false || ! m_enabled ) 
    {
       m_loopCnt++;
       if ( m_loopCnt >= 3 ) 
@@ -89,6 +92,7 @@ void Display::loop()
 
    if ( m_loopCnt >= 3 ) 
    {
+      ESP_LOGI(TAG, "All off");
       /***********************************************/
       /*   Start  things  by turning off all of the  */
       /*   m_lamps and digits.                         */
@@ -106,6 +110,7 @@ void Display::loop()
    }
    else if ( m_loopCnt != 0 )
    {
+      ESP_LOGI(TAG, "display nop");
       m_loopCnt++;
       return;
    } 
@@ -123,11 +128,13 @@ void Display::loop()
    if ( flashCounter < 0 ) 
    {
 //         PORTB &= ~_BV(0);
+      ESP_LOGI(TAG, "hide digit");
       showDigit = false;
    }
    else
    {
 //         PORTB |= _BV(0);
+      ESP_LOGI(TAG, "show digit");
       showDigit = true;
    }
 
@@ -154,9 +161,10 @@ void Display::loop()
       /*   appropriate pins to do the deed           */
       /***********************************************/
 
+      ESP_LOGI(TAG, "showDigit = %d", showDigit);
       if ( showDigit ) 
       {
-//         Serial << (int)m_nextDigit << ":" << (int)m_digitValues[m_nextDigit] << endl;
+         ESP_LOGI(TAG, "%d: %d", (int)m_nextDigit, (int)m_digitValues[m_nextDigit]);
          Digits[m_nextDigit]->on();
          Segments[m_digitValues[m_nextDigit]]->on();
       }
@@ -193,10 +201,49 @@ void Display::loop()
 #endif
 }
 
+void Display::digitsOff()
+{
+   ESP_LOGI(TAG, "Turning all digits off");
+   for (int x = 0; x < IOPorts::NUM_DIGITS; x++)
+   {
+      Digits[x]->off();
+   }
+}
+
+void Display::digitOn(int digit)
+{
+   ESP_LOGI(TAG, "Turning on digit %d", digit);
+   if (digit < IOPorts::NUM_DIGITS)
+   {
+      digitsOff();
+      Digits[digit]->on();
+   }
+}
+
+void Display::segmentsOff()
+{
+   ESP_LOGI(TAG, "Turning all segments off");
+   for (int x = 0; x < IOPorts::NUM_SEGMENTS; x++)
+   {
+      Segments[x]->off();
+   }
+}
+
+void Display::segmentOn(int segment)
+{
+   if (segment < IOPorts::NUM_SEGMENTS)
+   {
+      segmentsOff();
+      ESP_LOGI(TAG, "Turning on segment %d", segment);
+      Segments[segment]->on();
+   }
+}
+
 bool Display::disable()
 {
    bool rv = m_enabled;
    HVEnable->on();
+   Heat->on();
    m_enabled = false;
    enableCounter = 0;
    return(rv);
@@ -213,6 +260,7 @@ void Display::touch()
    enableCounter = 0;
 //   Serial << __PRETTY_FUNCTION__ << " here" << endl;
    HVEnable->off();
+   Heat->off();
    m_enabled = true;
 };
 

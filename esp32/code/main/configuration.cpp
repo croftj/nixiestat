@@ -16,12 +16,14 @@ static int     times[5];
 static float   temps[5];
 
 extern PID pid;
+extern Configuration *config;
 
 void show_current_sensors(std::ostream& d_out);
 void showTemp(Variant& sensor, std::ostream& d_out);
 void showOutsideTemp(std::ostream& d_out);
 void showCycleTemp(std::ostream& d_out);
 void showRoomTemp(std::ostream& d_out);
+void showTargetTemp(std::ostream& d_out);
 void showMode(std::ostream& d_out);
 bool setMode(std::string);
 bool voidAction(std::string);
@@ -33,54 +35,56 @@ namespace confMenu
    /*************/
    MenuEntry mainMenu((const char*)"Configuration",            (const char*)"main",       MenuEntry::MainMenu);
 
-   MenuEntry hdnEntry00((const char*)"x", (const char*)"cyc_hyst",      MenuEntry::Hidden, &Configuration::m_cycleHyst, &mainMenu);
-   MenuEntry hdnEntry01((const char*)"x", (const char*)"pid_enable",    MenuEntry::Hidden, &Configuration::m_pidEnabled, &mainMenu);
-   MenuEntry hdnEntry02((const char*)"x", (const char*)"kp",            MenuEntry::Hidden, &Configuration::m_Kp, &mainMenu);
-   MenuEntry hdnEntry03((const char*)"x", (const char*)"ki",            MenuEntry::Hidden, &Configuration::m_Ki, &mainMenu);
-   MenuEntry hdnEntry04((const char*)"x", (const char*)"kd",            MenuEntry::Hidden, &Configuration::m_Kd, &mainMenu);
-   MenuEntry hdnEntry05((const char*)"x", (const char*)"out_curve",     MenuEntry::Hidden, &Configuration::m_outsideCurve, &mainMenu);
-   MenuEntry hdnEntry06((const char*)"x", (const char*)"out_adj",       MenuEntry::Hidden, &Configuration::m_outsideAdj, &mainMenu);
-   MenuEntry hdnEntry07((const char*)"x", (const char*)"cyc_sensor",    MenuEntry::Hidden, &Configuration::m_cycleSensor, &mainMenu);
-   MenuEntry hdnEntry08((const char*)"x", (const char*)"cyc_min_time",  MenuEntry::Hidden, &Configuration::m_cycleMinTime, &mainMenu);
-   MenuEntry hdnEntry09((const char*)"x", (const char*)"cyc_max_time",  MenuEntry::Hidden, &Configuration::m_cycleMaxTime, &mainMenu);
-   MenuEntry hdnEntry11((const char*)"x", (const char*)"cyc_min_temp",  MenuEntry::Hidden, &Configuration::m_cycleMin, &mainMenu);
-   MenuEntry hdnEntry12((const char*)"x", (const char*)"cyc_max_temp",  MenuEntry::Hidden, &Configuration::m_cycleMax, &mainMenu);
-   MenuEntry hdnEntry13((const char*)"x", (const char*)"heat_override", MenuEntry::Hidden, &Configuration::m_heatTimes[0], &mainMenu);
-   MenuEntry hdnEntry14((const char*)"x", (const char*)"cool_override", MenuEntry::Hidden, &Configuration::m_coolTimes[0], &mainMenu);
-   MenuEntry hdnEntry15((const char*)"x", (const char*)"heat_temp",     MenuEntry::Hidden, &Configuration::m_heatTemps[0], &mainMenu);
-   MenuEntry hdnEntry16((const char*)"x", (const char*)"heat_time",     MenuEntry::Hidden, &Configuration::m_heatTimes[0], &mainMenu);
-   MenuEntry hdnEntry17((const char*)"x", (const char*)"cool_temp",     MenuEntry::Hidden, &Configuration::m_coolTemps[0], &mainMenu);
-   MenuEntry hdnEntry18((const char*)"x", (const char*)"cool_time",     MenuEntry::Hidden, &Configuration::m_coolTimes[0], &mainMenu);
-   MenuEntry hdnEntry19((const char*)"x", (const char*)"vacation_mode", MenuEntry::Hidden, &Configuration::m_vacationMode, &mainMenu);
+   MenuEntry hdnEntry00((const char*)"x", (const char*)"cyc_hyst",      MenuEntry::Int,   &Configuration::m_cycleHyst,    &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry01((const char*)"x", (const char*)"pid_enable",    MenuEntry::YesNo, &Configuration::m_pidEnabled,   &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry02((const char*)"x", (const char*)"kp",            MenuEntry::Float, &Configuration::m_Kp,           &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry03((const char*)"x", (const char*)"ki",            MenuEntry::Float, &Configuration::m_Ki,           &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry04((const char*)"x", (const char*)"kd",            MenuEntry::Float, &Configuration::m_Kd,           &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry05((const char*)"x", (const char*)"out_curve",     MenuEntry::Float, &Configuration::m_outsideCurve, &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry06((const char*)"x", (const char*)"out_adj",       MenuEntry::Float, &Configuration::m_outsideAdj,   &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry07((const char*)"x", (const char*)"cyc_sensor",    MenuEntry::String, &Configuration::m_cycleSensor, &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry08((const char*)"x", (const char*)"cyc_min_time",  MenuEntry::Int,   &Configuration::m_cycleMinTime, &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry09((const char*)"x", (const char*)"cyc_max_time",  MenuEntry::Int,   &Configuration::m_cycleMaxTime, &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry11((const char*)"x", (const char*)"cyc_min_temp",  MenuEntry::Float, &Configuration::m_cycleMin,     &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry12((const char*)"x", (const char*)"cyc_max_temp",  MenuEntry::Float, &Configuration::m_cycleMax,     &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry13((const char*)"x", (const char*)"heat_override", MenuEntry::Float, &Configuration::m_heatTimes[0], &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry14((const char*)"x", (const char*)"cool_override", MenuEntry::Float, &Configuration::m_coolTimes[0], &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry15((const char*)"x", (const char*)"heat_temp",     MenuEntry::Float, &Configuration::m_heatTemps[0], &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry16((const char*)"x", (const char*)"heat_time",     MenuEntry::Float, &Configuration::m_heatTimes[0], &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry17((const char*)"x", (const char*)"cool_temp",     MenuEntry::Float, &Configuration::m_coolTemps[0], &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry18((const char*)"x", (const char*)"cool_time",     MenuEntry::Int,   &Configuration::m_coolTimes[0], &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry19((const char*)"x", (const char*)"vacation_mode", MenuEntry::YesNo, &Configuration::m_vacationMode, &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
+   MenuEntry hdnEntry20((const char*)"x", (const char*)"ovr_offset",    MenuEntry::Float, &Configuration::m_overideOffset, &mainMenu, NULL, (MenuEntry::Invisible | MenuEntry::NoPermanence));
 
 
    MenuEntry resetEntry((const char*)"reset_count",            (const char*)"rst_count",  MenuEntry::String,   &Configuration::m_resetCount, &mainMenu);
    MenuEntry desplyEnbl((const char*)"Force On",               (const char*)"force_on",   MenuEntry::YesNo,    &Configuration::m_forceOn,    &mainMenu);
    MenuEntry ssidEntry((const char*)"SSID",                    (const char*)"ssid",       MenuEntry::String,   &Configuration::m_ssid,       &mainMenu);
    MenuEntry wkeyEntry((const char*)"WPA KEY",                 (const char*)"wpa_key",    MenuEntry::String,   &Configuration::m_wapkey,     &mainMenu);
-   MenuEntry modeEntry((const char*)"Mode (Heat,Cool)",        (const char*)"mode",       MenuEntry::CustomIO, setMode,    showMode,        &mainMenu);
-   MenuEntry outTempEntry((const char*)"Outside Temperature",  (const char*)"outside",    MenuEntry::CustomIO, voidAction, showOutsideTemp, &mainMenu);
-   MenuEntry cycleTempEntry((const char*)"Cycle Temperature",  (const char*)"cycle",      MenuEntry::CustomIO, voidAction, showCycleTemp,   &mainMenu);
-   MenuEntry roomTempEntry((const char*)"Room Temperature",    (const char*)"room",       MenuEntry::CustomIO, voidAction, showRoomTemp,    &mainMenu);
+   MenuEntry modeEntry((const char*)"Mode (Heat,Cool)",        (const char*)"mode",       MenuEntry::CustomIO, setMode,    showMode,         &mainMenu);
+   MenuEntry outTempEntry((const char*)"Outside Temperature",  (const char*)"outside",    MenuEntry::CustomIO, voidAction, showOutsideTemp,  &mainMenu);
+   MenuEntry cycleTempEntry((const char*)"Cycle Temperature",  (const char*)"cycle",      MenuEntry::CustomIO, voidAction, showCycleTemp,    &mainMenu);
+   MenuEntry roomTempEntry((const char*)"Room Temperature",    (const char*)"room",       MenuEntry::CustomIO, voidAction, showRoomTemp,      &mainMenu);
+   MenuEntry tgtTempEntry((const char*)"Set Temperature",     (const char*)"target",     MenuEntry::CustomIO, voidAction, showTargetTemp,   &mainMenu);
    MenuEntry thermMenu((const char*)"Thermostat Settings",     (const char*)"thermostat", MenuEntry::SubMenu,  &mainMenu);
    MenuEntry mqttMenu((const char*)"MQTT Settings",            (const char*)"mqtt",       MenuEntry::SubMenu,  &mainMenu);
    
    /******************************/
    /* General Themostat settings */
    /******************************/
-   MenuEntry sendmEntry((const char*)"Send Status  Messages", (const char*)"send_status",       MenuEntry::YesNo,    &Configuration::m_SendStatus,      &thermMenu);
-   MenuEntry tsampEntry((const char*)"Sample Interval (secs)", (const char*)"samp_int",         MenuEntry::UInt,     &Configuration::m_sampleInterval,  &thermMenu);
-   MenuEntry rsampEntry((const char*)"Report Interval (secs)", (const char*)"rept_int",         MenuEntry::UInt,     &Configuration::m_reportInterval,  &thermMenu);
-   MenuEntry setTempEntry((const char*)"Set Temperature",      (const char*)"set_point",        MenuEntry::Float,    &Configuration::m_setTemp,         &thermMenu);
-   MenuEntry roomDevEntry((const char*)"Room Device Id",       (const char*)"target_sensor",    MenuEntry::String,   &Configuration::m_targetSensor,    &thermMenu);
-   MenuEntry outDevEntry((const char*)"Outside Device Id",     (const char*)"outside_sensor",   MenuEntry::String,   &Configuration::m_outsideSensor,   &thermMenu);
-   MenuEntry sensPortEntry((const char*)"Sensor IO Port",      (const char*)"sens_port",        MenuEntry::UInt,     &Configuration::m_sensorPort,      &thermMenu);
-   MenuEntry vacTempEntry((const char*)"Vacation Temp",        (const char*)"vacation_temp",    MenuEntry::Float,    &Configuration::m_vacationTemp,    &thermMenu);
-   MenuEntry rmtReleays((const char*)"Remote Relays",          (const char*)"rmt_relays",       MenuEntry::YesNo,    &Configuration::m_remoteRelays,    &thermMenu);
-   MenuEntry sensorMenu((const char*)"Local Sensors",          (const char*)"sensors",          MenuEntry::SubMenu,  &thermMenu);
-   MenuEntry rmtSensorMenu((const char*)"RemoteSensors",       (const char*)"rmt_sensors",      MenuEntry::SubMenu,  &thermMenu);
-   MenuEntry heatingMenu((const char*)"Heater Settings",       (const char*)"heater_set",       MenuEntry::SubMenu,  &thermMenu);
-   MenuEntry coolingMenu((const char*)"Cooler Settings",       (const char*)"cooler_set",       MenuEntry::SubMenu,  &thermMenu);
+   MenuEntry tme01((const char*)"Send Status  Messages",    (const char*)"send_status",       MenuEntry::YesNo,    &Configuration::m_SendStatus,      &thermMenu);
+   MenuEntry tme02((const char*)"Sample Interval (secs)",   (const char*)"samp_int",         MenuEntry::UInt,     &Configuration::m_sampleInterval,  &thermMenu);
+   MenuEntry tme03((const char*)"Report Interval (secs)",   (const char*)"rept_int",         MenuEntry::UInt,     &Configuration::m_reportInterval,  &thermMenu);
+   MenuEntry tme04((const char*)"Set Temperature",          (const char*)"man_temp",         MenuEntry::Float,    &Configuration::m_setTemp,         &thermMenu);
+   MenuEntry tme05((const char*)"Room Device Id",           (const char*)"target_sensor",    MenuEntry::String,   &Configuration::m_targetSensor,    &thermMenu);
+   MenuEntry tme06((const char*)"Outside Device Id",        (const char*)"outside_sensor",   MenuEntry::String,   &Configuration::m_outsideSensor,   &thermMenu);
+   MenuEntry tme07((const char*)"Sensor IO Port",           (const char*)"sens_port",        MenuEntry::UInt,     &Configuration::m_sensorPort,      &thermMenu);
+   MenuEntry tme08((const char*)"Vacation Temp",            (const char*)"vacation_temp",    MenuEntry::Float,    &Configuration::m_vacationTemp,    &thermMenu);
+   MenuEntry tme09((const char*)"Remote Relays",            (const char*)"rmt_relays",       MenuEntry::YesNo,    &Configuration::m_remoteRelays,    &thermMenu);
+   MenuEntry sensorMenu((const char*)"Local Sensors",       (const char*)"sensors",          MenuEntry::SubMenu,  &thermMenu);
+   MenuEntry rmtSensorMenu((const char*)"RemoteSensors",    (const char*)"rmt_sensors",      MenuEntry::SubMenu,  &thermMenu);
+   MenuEntry heatingMenu((const char*)"Heater Settings",    (const char*)"heater_set",       MenuEntry::SubMenu,  &thermMenu);
+   MenuEntry coolingMenu((const char*)"Cooler Settings",    (const char*)"cooler_set",       MenuEntry::SubMenu,  &thermMenu);
    /****************************/
    /* Heater Specific Settings */
    /****************************/
@@ -279,6 +283,7 @@ Variant Configuration::m_cycleMinTime;
 Variant Configuration::m_cycleMaxTime;
 Variant Configuration::m_cycleMin;
 Variant Configuration::m_cycleMax;
+Variant Configuration::m_overideOffset;
 
 const char Configuration::GET_KEYS_CMD[] = "show_keys";
 const char Configuration::GET_KNOWN_SENSORS_CMD[] = "known_sensors";
@@ -304,6 +309,13 @@ void showOutsideTemp(std::ostream& d_out)
 void showCycleTemp(std::ostream& d_out)
 {
    showTemp(Configuration::m_cycleSensor, d_out);
+}
+
+void showTargetTemp(std::ostream& d_out)
+{
+   float offset = config->value("ovr_offset").toDouble();
+   float target = config->getCurrentTempSetting() - offset;
+   d_out << target << ", ofs: " << offset;
 }
 
 void showRoomTemp(std::ostream& d_out)
@@ -422,8 +434,10 @@ Configuration::Configuration(uart_port_t port_num) :
    m_defaultValues["heat_time4"]          = string("1200");
    m_defaultValues["heat_temp4"]          = string("69.0");
    m_defaultValues["mode"]                = string("0");
-   m_defaultValues["vacation_mode"]       = string("false");
-   m_defaultValues["vacation_temp"]       = string("55");
+   m_defaultValues["vac_mode"]            = string("false");
+   m_defaultValues["vac_temp"]            = string("55");
+   m_defaultValues["ovr_offset"]          = string("0");
+
    m_defaultValues["rmt_relays"]          = string("false");
 #endif
    m_sensors.push_back(std::make_pair(&m_sensorAddr1, &m_sensorName1));
@@ -465,7 +479,7 @@ void Configuration::setModeValues()
       times[3] = value("heat_time3").toInt();
       times[4] = value("heat_time4").toInt();
 
-      temps[0] = value("set_point").toDouble();
+      temps[0] = value("man_temp").toDouble();
       temps[1] = value("heat_temp1").toDouble();
       temps[2] = value("heat_temp2").toDouble();
       temps[3] = value("heat_temp3").toDouble();
@@ -497,7 +511,7 @@ void Configuration::setModeValues()
       times[3] = value("cool_time3").toInt();
       times[4] = value("cool_time4").toInt();
 
-      temps[0] = value("set_point").toInt();
+      temps[0] = value("man_temp").toInt();
       temps[1] = value("cool_time1").toInt();
       temps[2] = value("cool_time2").toInt();
       temps[3] = value("cool_time3").toInt();
@@ -524,20 +538,18 @@ int Configuration::CalculateCurrentSetting()
    int cst_adj = (m_tzMinutes * 60);
    int currTime = (((int)tv.tv_sec + cst_adj) % (24 * 60 * 60)) / 60;
    int bestTime = 2000;
-   ESP_LOGI(TAG, "secs from epoc: %d, currTime: %d, adj: %d", (int)tv.tv_sec, currTime, cst_adj);
+//   ESP_LOGI(TAG, "secs from epoc: %d, currTime: %d, adj: %d", (int)tv.tv_sec, currTime, cst_adj);
    for (int x = 1; x < Configuration::NUM_SETTINGS; x++) 
    {
       if ( temps[x] >= 0 ) 
       {
-         ESP_LOGI(TAG, "currTime: %d, bestTime: %d, timeSettings[%d]: %d", currTime, bestTime, x, times[x]);
-//         Serial  << __PRETTY_FUNCTION__ << " CurrTime: " << currTime << ", bestTime: " << bestTime << ", timeSettings[" << (int)x << "]: " << timeSettings[x] << endl;
+//         ESP_LOGI(TAG, "currTime: %d, bestTime: %d, timeSettings[%d]: %d", currTime, bestTime, x, times[x]);
          if ( temps[x] > 0.0 && currTime - times[x] >= 0 &&
                currTime - times[x] < bestTime  ) 
          {
             setting = x;
             bestTime = currTime - times[x];
-            ESP_LOGI(TAG, "best time- setting: %d, time: %d", setting, bestTime);
-//            Serial  << __PRETTY_FUNCTION__ << " Best Time- setting: " << (int)setting << ", time: " << bestTime << endl;
+//            ESP_LOGI(TAG, "best time- setting: %d, time: %d", setting, bestTime);
          }
       }
    }
@@ -575,11 +587,11 @@ float Configuration::getCurrentTempSetting()
    /*   If  we  are  in  vacation mode, just get  */
    /*   it's setting and go for it.               */
    /***********************************************/
-   ESP_LOGI(TAG, "vacation_mode: %s", value("vacation_mode").toString().c_str());
-   bool vac_mode = value("vacation_mode").toBool();
+//   ESP_LOGI(TAG, "vacation_mode: %s", value("vac_mode").toString().c_str());
+   bool vac_mode = value("vac_mode").toBool();
    if (vac_mode)
    {
-      target = Configuration::m_vacationTemp.toDouble();
+      target = value("vac_temp").toDouble();
    }
 #endif
 #if 1
@@ -608,6 +620,7 @@ float Configuration::getCurrentTempSetting()
       {
          target = temps[setting];
       }
+      target += value("ovr_offset").toDouble();
    }
 #endif
    return(target);
@@ -659,7 +672,7 @@ void Configuration::changeMade()
       size_t   len = sizeof(buf);
       ESP_LOGI(TAG, "config parm %s, type %d", pos->c_str(), m_menu->type());
       MenuEntry *menu = m_menu->findEntry(*pos);
-      if (menu != NULL && menu->type() != MenuEntry::SubMenu && menu->type() != MenuEntry::MainMenu)
+      if (menu != NULL && ! (menu->options() & MenuEntry::NoPermanence) && menu->type() != MenuEntry::SubMenu && menu->type() != MenuEntry::MainMenu)
       {
          Variant val = m_menu->entryValue(*pos);
          err = nvs_get_str(m_nvsHandle, pos->c_str(), buf, &len); 

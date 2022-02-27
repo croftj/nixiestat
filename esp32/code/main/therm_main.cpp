@@ -282,7 +282,8 @@ extern "C" void app_main(void)
    ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
    
 #if 1
-   Heat->initialize(I2C_NUM_0, 5, 4, 16000);
+//   Heat->initialize(I2C_NUM_0, 5, 4, 16000);
+   Heat->initialize(I2C_NUM_0, 5, 4, 128000);
    Heat->setPort(0xff);
    HVEnable->on();
    mpr121 = new MPR121(MPR121::OTHER, 0x5a, 0xff, (gpio_num_t)35);

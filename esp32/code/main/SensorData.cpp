@@ -59,7 +59,7 @@ SensorData SensorData::getSensor(std::string name)
          {
             if (std::regex_search(it->first, match, device_name_re))
             {
-               ESP_LOGI(TAG, "Found match, device = %s", match[1].str().c_str());
+//               ESP_LOGI(TAG, "Found match, device = %s", match[1].str().c_str());
                if (name == match[1].str()) 
                {
                   rv = m_known_sensors[it->first];
