@@ -1,6 +1,7 @@
 #include "thermostat.h"
 
 #include <math.h>
+#include <regex>
 
 #include "configuration.h"
 #include "CycleData.h"
@@ -15,6 +16,8 @@
 //#include "sys/time.h"
 
 #define TAG __PRETTY_FUNCTION__
+
+#define MULTI_SENSOR
 
 using namespace std;
 using namespace json11;
@@ -69,22 +72,32 @@ bool Thermostat::ReachedOverride(float cur_temp)
    return(rv);
 }
 
-#if MULTI_SENSOR
-SensorData selectSensor(QString sensors)
+#ifdef MULTI_SENSOR
+SensorData selectSensor(string sensors, time_t now)
 {
    SensorData rv;
-
-   QStringList sens_list = sensors.split(QRegExp("\\s*,\\s*"));
-   foreach (SensorData sensor, sens_list)
+   regex e("\\s*,\\s*");
+   regex_token_iterator<string::iterator> sensor_i(sensors.begin(), sensors.end(), e, -1);
+   regex_token_iterator<string::iterator> end;
+   while (sensor_i != end)
    {
+      string sn(*sensor_i++);
+      ESP_LOGI(TAG, "testing sensor: %s", sn.c_str());
+      SensorData sensor;
+      sensor = SensorData::getSensor(sn);
+      ESP_LOGI(TAG, "sensor name: %s", sensor.name().c_str());
+      ESP_LOGI(TAG, "sensor temp: %f", sensor.temperature());
       if (sensor.isValid())
       {
-         if (rv.timestamp() < sensor.timestamp() && rv.temperature() < sensor.temperature())
+         ESP_LOGI(TAG, "Have valid sensor rv = %d", rv.isValid());
+         if (now - sensor.timestamp() < 3 * 60 && ((! rv.isValid()) || rv.temperature() > sensor.temperature()))
          {
+            ESP_LOGI(TAG, "found sensor");
             rv = sensor;
          }
       }
    }
+   ESP_LOGI(TAG, "exit, sensor name: %s, temp: %f", rv.name().c_str(), rv.temperature());
    return(rv);
 }
 #endif
@@ -98,6 +111,7 @@ void Thermostat::run()
    bool        force_on;
    RunState    run_state;
    RunState    old_state = UNSET;
+   int alm_cnt = 0;
 
    old_state = NORMAL;
    this_thread::sleep_for(std::chrono::seconds(15));
@@ -131,19 +145,22 @@ void Thermostat::run()
       ESP_LOGI(TAG, "Fetching sensors");
       auto sd_cyc = SensorData::getSensor(config->value("cyc_sensor").toString());
       auto sd_out = SensorData::getSensor(config->value("outside_sensor").toString());
+#ifdef MULTI_SENSOR
+      auto sd_tgt = selectSensor(config->value("target_sensor").toString(), now);
+#else
       auto sd_tgt = SensorData::getSensor(config->value("target_sensor").toString());
-#if MULTI_SENSOR
-      auto sd_tgt = selectSensor(config->value("target_sensor").toString());
 #endif
+      ESP_LOGI(TAG, "outside sensor name: %s, temp: %f", sd_out.name().c_str(), sd_out.temperature());
+      ESP_LOGI(TAG, "target sensor name: %s, temp: %f", sd_tgt.name().c_str(), sd_tgt.temperature());
       cyc_data.setOutsideTemp(sd_out.temperature());
       cyc_data.setCurRoomTemp(sd_tgt.temperature());
       cyc_data.setCurCycleTemp(sd_cyc.temperature());
-      if (now - sd_cyc.timestamp() > 5 * 60)
+      if (pid_enabled && now - sd_cyc.timestamp() > 5 * 60)
       {
          pid_enabled = false;
          run_state = ALARM2;
       }
-      if (now - sd_out.timestamp() > 5 * 60)
+      if (pid_enabled && now - sd_out.timestamp() > 5 * 60)
       {
          run_state = ALARM1;
       }
@@ -194,7 +211,7 @@ void Thermostat::run()
          else
          {
             cur_cycle = config->getCurrentTempSetting();
-            temp_cycle.setSensor(config->value("target_sensor").toString());
+            temp_cycle.setSensor(sd_tgt.name());
          }
          cyc_data.setTgtCycleTemp(cur_cycle);
          ESP_LOGI(TAG, "Hystorisis = %f", (float)config->value("cyc_hyst").toDouble());
@@ -215,7 +232,21 @@ void Thermostat::run()
       /*********************************************************/
       else
       {
-         
+         alm_cnt++;
+         if (alm_cnt > 60)
+         {
+            time_t timestamp;
+            time(&timestamp);
+            json11::Json js = Json::object {
+               { "message_type", "reset" }, 
+               { "device", config->value("mqtt_ident").toString() }, 
+               { "cause", "Alarm time exceeded" }, 
+               { "timestamp",  (int)timestamp }
+            };
+            mqtt_bus->sendData(config->value("mqtt_stat_topic").toString().c_str(), js.dump().c_str());
+            this_thread::sleep_for(std::chrono::seconds(10));
+            esp_restart();
+         }
       }
       if (old_state != run_state)
       {

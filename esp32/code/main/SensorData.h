@@ -53,7 +53,7 @@ public:
 
    bool isValid()
    {
-      return(m_device.length() == 0 || m_sensor.length() == 0);
+      return(m_device.length() > 0 || m_sensor.length() > 0);
    }
 
    std::string name()
