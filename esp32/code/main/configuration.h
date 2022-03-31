@@ -56,6 +56,7 @@ public:
    static Variant m_mqttFurnaceTopic;
    static Variant m_mqttTempTopic;
    static Variant m_pingTopic;
+   static Variant m_tzMinutes;
 
    static Variant m_coolTimes[5];
    static Variant m_coolTemps[5];
@@ -135,14 +136,15 @@ public:
    void *process();
    virtual void changeMade();
    Variant value(std::string key);
-   void setValue(std::string key, Variant value);
+   void setValue(std::string key, Variant value, bool keep = true);
    int findSensorAddr(std::string device_addr);
    void updateSensors(std::vector<std::string> devices);
    void setModeValues();
 
+   int adjustedTimeOfDay();
    void setTzMinutes(int tz_mins)
    {
-      m_tzMinutes = tz_mins;
+      setValue("tz_minutes", Variant(tz_mins));
    }
 
    SensorDefList_t &sensorList()
@@ -172,7 +174,6 @@ private:
    static DefaultValue_t      m_defaultValues;
    static nvs_handle_t        m_nvsHandle;
    static SensorDefList_t     m_sensors;
-   int                        m_tzMinutes;
 };
 
 namespace ConfigurationThread

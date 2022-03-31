@@ -50,6 +50,12 @@ void Thermostat::SetOverride(float temp)
    m_override = true;
 }
 
+void Thermostat::CancelOverride()
+{
+   m_override = false;
+   config->setValue("ovr_offset", 0.0);
+}
+
 bool Thermostat::ReachedOverride(float cur_temp)
 {
    bool rv = false;
@@ -73,7 +79,7 @@ bool Thermostat::ReachedOverride(float cur_temp)
 }
 
 #ifdef MULTI_SENSOR
-SensorData selectSensor(string sensors, time_t now)
+SensorData Thermostat::selectSensor(string sensors, time_t now)
 {
    SensorData rv;
    regex e("\\s*,\\s*");
@@ -82,22 +88,22 @@ SensorData selectSensor(string sensors, time_t now)
    while (sensor_i != end)
    {
       string sn(*sensor_i++);
-      ESP_LOGI(TAG, "testing sensor: %s", sn.c_str());
+//      ESP_LOGI(TAG, "testing sensor: %s", sn.c_str());
       SensorData sensor;
       sensor = SensorData::getSensor(sn);
-      ESP_LOGI(TAG, "sensor name: %s", sensor.name().c_str());
-      ESP_LOGI(TAG, "sensor temp: %f", sensor.temperature());
+//      ESP_LOGI(TAG, "sensor name: %s", sensor.name().c_str());
+//      ESP_LOGI(TAG, "sensor temp: %f", sensor.temperature());
       if (sensor.isValid())
       {
-         ESP_LOGI(TAG, "Have valid sensor rv = %d", rv.isValid());
+ //        ESP_LOGI(TAG, "Have valid sensor rv = %d", rv.isValid());
          if (now - sensor.timestamp() < 3 * 60 && ((! rv.isValid()) || rv.temperature() > sensor.temperature()))
          {
-            ESP_LOGI(TAG, "found sensor");
+//            ESP_LOGI(TAG, "found sensor");
             rv = sensor;
          }
       }
    }
-   ESP_LOGI(TAG, "exit, sensor name: %s, temp: %f", rv.name().c_str(), rv.temperature());
+//   ESP_LOGI(TAG, "exit, sensor name: %s, temp: %f", rv.name().c_str(), rv.temperature());
    return(rv);
 }
 #endif

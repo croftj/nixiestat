@@ -1,5 +1,6 @@
 #include "TempCycle.h"
 #include "configuration.h"
+#include "DBGPorts.h"
 #include "IOPorts.h"
 #include "json11.hpp"
 #include "mqtt.h"
@@ -267,6 +268,7 @@ bool TempCycle::call4Heat(bool f, CycleData *cyc_data)
    if (f != m_lastCall)
    {
       m_lastCall = f;
+//      gpio_set_level(DBG_PIN_4, m_lastCall);
       rv = true;
    }
    cyc_data->setHeatState(f);

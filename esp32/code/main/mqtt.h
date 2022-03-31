@@ -2,10 +2,12 @@
 #define MQTT_H
 
 #include <deque>
+#include <list>
 #include <string>
 
 #include "mqtt_client.h"
 #include "configuration.h"
+#include "wifi.h"
 
 #include "freertos/semphr.h"
 
@@ -20,6 +22,8 @@ public:
       TOPIC_LEN = 64,
       MESG_LEN  = 880
    };
+
+   typedef std::list<std::string> topic_list_t;
 
    typedef class MessageEntry
    {
@@ -82,10 +86,21 @@ public:
       CONNECTED
    } status_t;
 
+   typedef enum
+   {
+      NOP               = 0,
+      SUBSCRIBE_TOPICS  = 1
+   } actions_t;
+
    MQTT()
    {
       m_msgMutex = xSemaphoreCreateMutexStatic(&m_msgMutexBuf);
       xSemaphoreGive(m_msgMutex);
+   }
+
+   void addSubscription(std::string &topic)
+   {
+      m_subTopics.push_back(topic);
    }
 
    bool connected()
@@ -93,9 +108,13 @@ public:
       return(m_client != NULL);
    }
 
-   static bool clientReady();
+   void setWifi(Wifi *wifi)
+   {
+      m_wifi = wifi;
+   }
 
-   bool setBroker(std::string &broker);
+   static bool clientReady();
+   void setBroker(std::string &broker);
    void sendData(const char *topic, const char *json);
    void sendData(std::string &topic, std::string &json);
    void subscribe(std::string &topic);
@@ -111,11 +130,14 @@ private:
    friend esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event);
 
    std::string                      m_broker;
+   static Wifi*                     m_wifi;
+   static actions_t                 m_action;
    static esp_mqtt_client_handle_t  m_client;
    static bool                      m_busDisconnect;
    static bool                      m_notReady;
    static StaticSemaphore_t         m_msgMutexBuf;
    static SemaphoreHandle_t         m_msgMutex;
+   static topic_list_t              m_subTopics;
 };
 
 extern MQTT* mqtt_bus;

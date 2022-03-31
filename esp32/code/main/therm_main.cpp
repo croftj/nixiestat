@@ -1,12 +1,3 @@
-/* MQTT (over TCP) Example
-
-   This example code is in the Public Domain (or CC0 licensed, at your option.)
-
-   Unless required by applicable law or agreed to in writing, this
-   software is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR
-   CONDITIONS OF ANY KIND, either express or implied.
-*/
-
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -35,13 +26,17 @@
 #include "lwip/netdb.h"
 
 #include "configuration.h"
+#include "DBGPorts.h"
 #include "display.h"
 #include "IOPorts.h"
 #include "json11.hpp"
 #include "MPR121.h"
 #include "mqtt_client.h"
 #include "mqtt.h"
+#include "PT7C4339.h"
 #include "thermostat.h"
+#include "ui.h"
+#include "wifi.h"
 /*
 
 */
@@ -50,11 +45,13 @@
 #define TAG __PRETTY_FUNCTION__
 
 #define MQTT_EXAMPLE_CODE     0
+#define WIFI 0
+
+#include "driver/gpio.h"
+
 #define WIFI_CONNECTED_BIT    BIT0
 #define WIFI_FAIL_BIT         BIT1
 #define WIFI_MAXIMUM_RETRY    0
-
-#include "driver/gpio.h"
 
 #define RED_LED_PIN  ((gpio_num_t)26)
 #define GRN_LED_PIN  ((gpio_num_t)21)
@@ -83,6 +80,9 @@ Configuration *config;
 gpio_config_t led_conf;
 gpio_config_t kyb_conf;
 
+#if ! WIFI
+Wifi wifi(GRN_LED_PIN);
+#else
 static EventGroupHandle_t s_wifi_event_group;
 
 static void event_handler(void* arg, esp_event_base_t event_base,
@@ -97,18 +97,6 @@ static void event_handler(void* arg, esp_event_base_t event_base,
    }
    else if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_DISCONNECTED)
    {
-      /*
-      if (s_retry_num <= WIFI_MAXIMUM_RETRY)
-      {
-         esp_wifi_connect();
-         s_retry_num++;
-         ESP_LOGI(TAG, "retry to connect to the AP");
-      }
-      else
-      {
-         xEventGroupSetBits(s_wifi_event_group, WIFI_FAIL_BIT);
-      }
-      */
       ESP_LOGI(TAG,"retry wifi connect");
       esp_wifi_connect();
       ESP_LOGI(TAG,"connect to the AP fail");
@@ -204,35 +192,16 @@ extern "C" void wifi_scan()
       ESP_LOGI(TAG, "Channel \t\t%d", (int)ap_info[i].primary);
    }
 }
+#endif
 
 static void* ping_home(void *)
 {
    bool led_state = true;
-   this_thread::sleep_for(std::chrono::seconds(15));
    while (true)
    {
       time_t timestamp;
       time(&timestamp);
-#if 0
-      float target = config->getCurrentTempSetting();
-      ESP_LOGI(TAG, "Test time: %d, target = %2.3f, rst_count: %d", (int)timestamp, target, config->value("rst_count").toInt());
-#endif
-
-#if 0
-      if (led_state)
-      {
-         Heat->on();
-         led_state = false;
-      }
-      else
-      {
-         Heat->off();
-         led_state = true;
-      }
-#endif
-
-#if 1
-      if (true)
+      if (mqtt_bus->clientReady())
       {
          string config_topic = config->value("mqtt_ident").toString() + "/configure";
          string time_topic = config->value("mqtt_ident").toString() + "/time";
@@ -265,9 +234,12 @@ static void* ping_home(void *)
             { "timestamp",  (int)timestamp}
          };
          mqtt_bus->sendData("ping", js.dump().c_str());
+         this_thread::sleep_for(std::chrono::seconds(30));
       }
-#endif
-      this_thread::sleep_for(std::chrono::seconds(30));
+      else
+      {
+         this_thread::sleep_for(std::chrono::seconds(2));
+      }
       esp_task_wdt_reset();
    }
    return(NULL);
@@ -280,13 +252,26 @@ extern "C" void app_main(void)
    ESP_LOGI(TAG, "[APP] Startup..");
    ESP_LOGI(TAG, "[APP] Free memory: %d bytes", esp_get_free_heap_size());
    ESP_LOGI(TAG, "[APP] IDF version: %s", esp_get_idf_version());
+
+   init_debug();
+
+   led_conf.intr_type = GPIO_INTR_DISABLE;
+   led_conf.mode = GPIO_MODE_OUTPUT;
+   //bit mask of the pins that you want to set,e.g.GPIO18/19
+   led_conf.pin_bit_mask = GPIO_LED_MASK;
+   led_conf.pull_down_en = (gpio_pulldown_t)0;
+   led_conf.pull_up_en = (gpio_pullup_t)0;
+   gpio_config(&led_conf);
+   gpio_set_level(GRN_LED_PIN, 1);
    
 #if 1
 //   Heat->initialize(I2C_NUM_0, 5, 4, 16000);
-   Heat->initialize(I2C_NUM_0, 5, 4, 128000);
+   Heat->initialize(I2C_NUM_0, 5, 4, 256000);
    Heat->setPort(0xff);
    HVEnable->on();
-   mpr121 = new MPR121(MPR121::OTHER, 0x5a, 0xff, (gpio_num_t)35);
+   mpr121   = new MPR121(MPR121::OTHER, 0x5a, 0xff, (gpio_num_t)35);
+   rtc_4339 = new PT7C4339(PT7C4339::TRICKLE_2K, PT7C4339::SQW_32K);
+   
 #endif
 
    esp_log_level_set("*", ESP_LOG_VERBOSE);
@@ -297,6 +282,8 @@ extern "C" void app_main(void)
    esp_log_level_set("TRANSPORT", ESP_LOG_VERBOSE);
    esp_log_level_set("OUTBOX", ESP_LOG_VERBOSE);
    
+   mqtt_bus->setWifi(&wifi);
+
    esp_pthread_cfg_t cfg = esp_pthread_get_default_config();
    cfg.stack_size = (4 * 1024);
    cfg.inherit_cfg = true;
@@ -311,15 +298,63 @@ extern "C" void app_main(void)
 
    this_thread::sleep_for(std::chrono::milliseconds(1000));
    ESP_ERROR_CHECK(nvs_flash_init());
-
+   
+   cfg = esp_pthread_get_default_config();
    cfg.stack_size = (6 * 1024);
    cfg.inherit_cfg = true;
    esp_pthread_set_cfg(&cfg);
+
+   wifi_initialize();
+   ESP_LOGI(TAG, "Starting wifi thread");
+   pthread_t wifi_thread;
+   pthread_create(&wifi_thread, NULL, Wifi::connectWifi, config);
+   
+   ESP_LOGI(TAG, "Free space %d", fs);
+
+   time_t now = rtc_4339->readRTCTime() - (config->value("tz_minutes").toInt() * 60);
+   struct timeval tv;
+   struct timezone tz;
+   tv.tv_sec = now;
+   tv.tv_usec = 0;
+   tz.tz_minuteswest = 0;
+   tz.tz_dsttime = 0;
+   ESP_LOGI(TAG, "setting system time %d", (int)now);
+   settimeofday(&tv, &tz);
+
+
+   /*********************************************************/
+   /* Configure the mqtt bus parameters and add the topics  */
+   /* we want to subscribe to but don't actually connect to */
+   /* it until we are ready.                                */
+   /*********************************************************/
+   if (true)
+   {
+      ESP_LOGI(TAG, "Configuring to MQTT buss");
+      string board = config->value("mqtt_ident").toString();
+      string topic;
+      string broker = config->value("mqtt_broker").toString();
+      mqtt_bus->setBroker(broker);
+#if 1 || PROCESS_MESSAGES
+      this_thread::sleep_for(std::chrono::milliseconds(2000));
+      ESP_LOGI(TAG, "Subscribing topics");
+      ESP_LOGI(TAG, "Subscribing to topic: %s", (board + CONFIGURATION_TOPIC).c_str());
+      topic = board + CONFIGURATION_TOPIC;
+      mqtt_bus->addSubscription(topic);
+      ESP_LOGI(TAG, "Subscribing to topic: %s", (board + TIME_TOPIC).c_str());
+      topic = board + TIME_TOPIC;
+      mqtt_bus->addSubscription(topic);
+      ESP_LOGI(TAG, "Subscribing to topic: %s", config->value("mqtt_temp_topic").toString().c_str());
+      topic = config->value("mqtt_temp_topic").toString();
+      mqtt_bus->addSubscription(topic);
+#endif
+   }
+
    ESP_LOGI(TAG, "Starting mqtt message thread");
+   cfg.prio = 5;
+   esp_pthread_set_cfg(&cfg);
    pthread_t mqtt_thread;
    pthread_create(&mqtt_thread, NULL, MQTT::procMessages, config);
-   ESP_LOGI(TAG, "Free space %d", fs);
-   
+
    ESP_LOGI(TAG, "Starting thermostat thread");
    pthread_t therm_thread;
    pthread_create(&therm_thread, NULL, Thermostat::exec, config);
@@ -336,91 +371,17 @@ extern "C" void app_main(void)
    ESP_LOGI(TAG, "Free space %d", fs);
 
 #if 1
-   ESP_LOGI(TAG, "Starting IOPort thread");
-   pthread_t ioport_thread;
-   pthread_create(&ioport_thread, NULL, I2CPort::exec, config);
+   ESP_LOGI(TAG, "Starting ui thread");
+   pthread_t ui_thread;
+   pthread_create(&ui_thread, NULL, Ui::runTimer, config);
    ESP_LOGI(TAG, "Free space %d", fs);
 
-#endif
-
-#if 1
-   ESP_LOGI(TAG, "Starting Display thread");
-   pthread_t display_thread;
-   pthread_create(&display_thread, NULL, Display::exec, config);
-
-#endif
-
-   led_conf.intr_type = GPIO_INTR_DISABLE;
-   led_conf.mode = GPIO_MODE_OUTPUT;
-   //bit mask of the pins that you want to set,e.g.GPIO18/19
-   led_conf.pin_bit_mask = GPIO_LED_MASK;
-   led_conf.pull_down_en = (gpio_pulldown_t)0;
-   led_conf.pull_up_en = (gpio_pullup_t)0;
-   gpio_config(&led_conf);
-   gpio_set_level(GRN_LED_PIN, 0);
-
-
-   /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
-   * Read "Establishing Wi-Fi or Ethernet Connection" section in
-   * examples/protocols/README.md for more information about this function.
-   */
-   wifi_initialize();
-
-   ESP_LOGI(TAG, "wifi initialised, waiting to connect.");
-   EventBits_t bits = xEventGroupWaitBits(s_wifi_event_group,
-            WIFI_CONNECTED_BIT | WIFI_FAIL_BIT,
-            pdFALSE,
-            pdFALSE,
-            portMAX_DELAY);
-
-   ESP_LOGI(TAG, "Done waiting!");
-   
-   /* xEventGroupWaitBits() returns the bits before the call returned, hence we can test which event actually
-   * happened. */
-   if (bits & WIFI_CONNECTED_BIT) {
-      ESP_LOGI(TAG, "Connected to AP");
-//         ESP_LOGI(TAG, "connected to ap SSID:%s password:%s",
-//                  config->value("ssid").toString().c_str(), config->value("wpa_key").toString().c_str());
-   } else if (bits & WIFI_FAIL_BIT) {
-      ESP_LOGI(TAG, "Failed to connect to AP");
-//         ESP_LOGI(TAG, "Failed to connect to SSID:%s, password:%s",
-//                  config->value("m_ssid").c_str(), config->m_wapkey.c_str());
-   } else {
-      ESP_LOGE(TAG, "UNEXPECTED EVENT");
-      assert(0);
-   }
-   
-#if 1
-   /***************************************************/
-   /* Connect to the MQTT broker and subscribe to the */
-   /* required topics                                 */
-   /***************************************************/
-   if (true)
-   {
-      cfg.stack_size = (4 * 1024);
-      cfg.inherit_cfg = true;
-      esp_pthread_set_cfg(&cfg);
-
-      ESP_LOGI(TAG, "Connecting to MQTT buss");
-      string board = config->value("mqtt_ident").toString();
-      string topic;
-      string broker = config->value("mqtt_broker").toString();
-      mqtt_bus->setBroker(broker);
-#if 1 || PROCESS_MESSAGES
-      this_thread::sleep_for(std::chrono::milliseconds(2000));
-      ESP_LOGI(TAG, "Subscribing topics");
-      ESP_LOGI(TAG, "Subscribing to topic: %s", (board + CONFIGURATION_TOPIC).c_str());
-      topic = board + CONFIGURATION_TOPIC;
-      mqtt_bus->subscribe(topic);
-      ESP_LOGI(TAG, "Subscribing to topic: %s", (board + TIME_TOPIC).c_str());
-      topic = board + TIME_TOPIC;
-      mqtt_bus->subscribe(topic);
-      ESP_LOGI(TAG, "Subscribing to topic: %s", config->value("mqtt_temp_topic").toString().c_str());
-      topic = config->value("mqtt_temp_topic").toString();
-      mqtt_bus->subscribe(topic);
-#endif
-   }
-
+   /*********************************************************/
+   /* Fire off the display threads. These are privileged    */
+   /* threads to help reduce flicking of the display tubes. */
+   /*********************************************************/
+   xTaskCreatePinnedToCore((TaskFunction_t)(I2CPort::exec), "I2CPort", 6 * 1024, config, 20 | portPRIVILEGE_BIT, NULL, 1);
+   xTaskCreatePinnedToCore((TaskFunction_t)(Display::exec), "I2CPort", 6 * 1024, config, 15, NULL, 0);
 #endif
 
    fs = heap_caps_get_free_size(MALLOC_CAP_DEFAULT|MALLOC_CAP_32BIT|MALLOC_CAP_8BIT);

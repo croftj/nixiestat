@@ -4,8 +4,10 @@
 #include <map>
 
 #include "display.h"
+#include "DBGPorts.h"
 #include "IOPorts.h"
 #include "PID.h"
+#include "PT7C4339.h"
 #include "SensorData.h"
 
 using namespace std;
@@ -26,6 +28,8 @@ void showRoomTemp(std::ostream& d_out);
 void showTargetTemp(std::ostream& d_out);
 void showMode(std::ostream& d_out);
 bool setMode(std::string);
+void showTime(std::ostream& d_out);
+bool setTime(std::string);
 bool voidAction(std::string);
 
 namespace confMenu
@@ -58,6 +62,8 @@ namespace confMenu
 
 
    MenuEntry resetEntry((const char*)"reset_count",            (const char*)"rst_count",  MenuEntry::String,   &Configuration::m_resetCount, &mainMenu);
+   MenuEntry tzOffsetEntry((const char*)"Tz Minutes",          (const char*)"tz_minutes", MenuEntry::Int,      &Configuration::m_tzMinutes,  &mainMenu);
+   MenuEntry dateTimeEntry((const char*)"Date Time",           (const char*)"date_time",  MenuEntry::CustomIO, setTime, showTime,            &mainMenu);
    MenuEntry desplyEnbl((const char*)"Force On",               (const char*)"force_on",   MenuEntry::YesNo,    &Configuration::m_forceOn,    &mainMenu);
    MenuEntry ssidEntry((const char*)"SSID",                    (const char*)"ssid",       MenuEntry::String,   &Configuration::m_ssid,       &mainMenu);
    MenuEntry wkeyEntry((const char*)"WPA KEY",                 (const char*)"wpa_key",    MenuEntry::String,   &Configuration::m_wapkey,     &mainMenu);
@@ -200,6 +206,7 @@ Variant Configuration::m_mqttStatusTopic;
 Variant Configuration::m_mqttFurnaceTopic;
 Variant Configuration::m_mqttTempTopic;
 Variant Configuration::m_pingTopic;
+Variant Configuration::m_tzMinutes;
 
 Variant Configuration::m_outsideSensor;
 Variant Configuration::m_targetSensor;
@@ -386,6 +393,26 @@ bool setMode(std::string input)
    return(rv);
 }
 
+void showTime(std::ostream& d_out)
+{
+   char buf[80];
+   time_t now;
+   struct tm *cur_time;
+//   now = rtc_4339->readRTCTime();   
+   time(&now);
+//   ESP_LOGI(TAG, "now: %d, tz_mins: %d", (int)now, Configuration::m_tzMinutes.toInt());
+   now += Configuration::m_tzMinutes.toInt() * 60;
+//   ESP_LOGI(TAG, "local now: %d", (int)now);
+   cur_time = gmtime(&now);
+   strftime(buf, sizeof(buf), "%T %D", cur_time);
+   d_out << buf;
+}
+
+bool setTime(std::string input)
+{
+   return(false);
+}
+
 bool voidAction(std::string)
 {
    return(false);
@@ -524,6 +551,18 @@ void Configuration::setModeValues()
    pid.SetTunings(Configuration::m_Kp.toDouble(), Configuration::m_Ki.toDouble(), Configuration::m_Kd.toDouble());
 }
 
+/*************************************************************/
+/* Returns the number of seconds since midnight. The time is */
+/* adjusted by adding the value of m_tzMinutes               */
+/*************************************************************/
+int Configuration::adjustedTimeOfDay()
+{
+   time_t now;
+   time(&now);
+   int cst_adj = (m_tzMinutes.toInt() * 60);
+   return((((int)now + cst_adj) % (24 * 60 * 60)));
+}
+
 int Configuration::CalculateCurrentSetting()
 {
    int setting = -1;   // Our return value.
@@ -535,7 +574,7 @@ int Configuration::CalculateCurrentSetting()
    /***********************************************/
    struct timeval tv;
    gettimeofday(&tv, NULL);
-   int cst_adj = (m_tzMinutes * 60);
+   int cst_adj = (m_tzMinutes.toInt() * 60);
    int currTime = (((int)tv.tv_sec + cst_adj) % (24 * 60 * 60)) / 60;
    int bestTime = 2000;
 //   ESP_LOGI(TAG, "secs from epoc: %d, currTime: %d, adj: %d", (int)tv.tv_sec, currTime, cst_adj);
@@ -665,18 +704,19 @@ void Configuration::changeMade()
    bool commit_needed = false;
    MenuEntry::KeyList_t menu_keys = keys();
    MenuEntry::KeyList_t::iterator pos;
+   gpio_set_level(DBG_PIN_4, 1);
    for (pos = menu_keys.begin(); pos != menu_keys.end(); ++pos)
    {
       char buf[256];
       memset(buf, '\0', sizeof(buf));
       size_t   len = sizeof(buf);
-      ESP_LOGI(TAG, "config parm %s, type %d", pos->c_str(), m_menu->type());
+ //     ESP_LOGI(TAG, "config parm %s, type %d", pos->c_str(), m_menu->type());
       MenuEntry *menu = m_menu->findEntry(*pos);
       if (menu != NULL && ! (menu->options() & MenuEntry::NoPermanence) && menu->type() != MenuEntry::SubMenu && menu->type() != MenuEntry::MainMenu)
       {
          Variant val = m_menu->entryValue(*pos);
          err = nvs_get_str(m_nvsHandle, pos->c_str(), buf, &len); 
-         ESP_LOGI(TAG, "config parm %s, value %s", pos->c_str(), val.toString().c_str());
+//         ESP_LOGI(TAG, "config parm %s, value %s", pos->c_str(), val.toString().c_str());
          if (strcmp(buf, val.toString().c_str()) != 0)
          {
             ESP_LOGI(TAG, "Setting config parm %s, to value %s", pos->c_str(), val.toString().c_str());
@@ -693,14 +733,17 @@ void Configuration::changeMade()
          }
       }
    }      
+   gpio_set_level(DBG_PIN_4, 0);
    if (commit_needed)
    {
       ESP_LOGI(TAG, "Commiting NVS");
       err = nvs_commit(m_nvsHandle);
    }
+   gpio_set_level(DBG_PIN_4, 1);
    setModeValues();
    I2CPort::setOutputEnable( ! value("rmt_relays").toBool());
-   display->setEnabled(m_displayEnb.toBool());
+   gpio_set_level(DBG_PIN_4, 0);
+//   display->setEnabled(m_displayEnb.toBool());
 }
 
 void* Configuration::process()
@@ -723,25 +766,24 @@ void* Configuration::process()
              mentry->type() != MenuEntry::CustomIO)
 #endif
          {
-            ESP_LOGI(TAG, "Searching NVS for var (%s)", pos->c_str());
+//            ESP_LOGI(TAG, "Searching NVS for var (%s)", pos->c_str());
             string str;
             Variant var;
             err = nvs_get_str(m_nvsHandle, pos->c_str(), buf, &len); 
             switch (err)
             {
                case ESP_OK:
-                  ESP_LOGI(TAG, "NVS var %s found!!!", pos->c_str());
+//                  ESP_LOGI(TAG, "NVS var %s found!!!", pos->c_str());
                   var.setValue(Variant(buf));
                   m_menu->setValue(*pos, var);
                   break;
-
                case ESP_ERR_NVS_NOT_FOUND:
-                  ESP_LOGI(TAG, "NVS var %s NOT found!!!", pos->c_str());
+//                  ESP_LOGI(TAG, "NVS var %s NOT found!!!", pos->c_str());
 #if 1
                   if (m_defaultValues.find(*pos) != m_defaultValues.end())
                   {
                      var.setValue(Variant(m_defaultValues.at(*pos)));
-                     ESP_LOGI(TAG, "NVS var %s default value %s", pos->c_str(), var.toString().c_str());
+ //                    ESP_LOGI(TAG, "NVS var %s default value %s", pos->c_str(), var.toString().c_str());
                      m_menu->setValue(*pos, var);
                   }
 #endif
@@ -755,7 +797,7 @@ void* Configuration::process()
          }
          else
          {
-            ESP_LOGI(TAG, "Skipping entry (%s)", pos->c_str());
+//            ESP_LOGI(TAG, "Skipping entry (%s)", pos->c_str());
          }
             
       }
@@ -793,11 +835,14 @@ Variant Configuration::value(string key)
    return(Variant(s_val));
 }
 
-void Configuration::setValue(string key, Variant val)
+void Configuration::setValue(string key, Variant val, bool keep)
 {
    MenuEntry *mentry = MenuEntry::findEntry(key);
    mentry->setValue(val);
-   changeMade();
+   if (keep)
+   {
+      changeMade();
+   }
 }
 
 int Configuration::findSensorAddr(std::string device_addr)

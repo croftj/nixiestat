@@ -34,6 +34,8 @@
 #include "esp_log.h"
 #include "mqtt_client.h"
 
+#include "PT7C4339.h"
+
 #include "configuration.h"
 #include "display.h"
 #include "json11.hpp"
@@ -60,8 +62,11 @@ extern Configuration *config;
 static pthread_t mqtt_thread = 0;
 
 
+MQTT::topic_list_t MQTT::m_subTopics;
 bool MQTT::m_busDisconnect = false;
-bool MQTT::m_notReady      = false;
+bool MQTT::m_notReady = false;
+MQTT::actions_t MQTT::m_action = MQTT::NOP;
+Wifi* MQTT::m_wifi         = NULL;
 
 esp_mqtt_client_handle_t  MQTT::m_client = NULL;
 
@@ -142,6 +147,7 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
    {
       case MQTT_EVENT_CONNECTED:
          ESP_LOGI(TAG, "MQTT_EVENT_CONNECTED");
+         MQTT::m_action = MQTT::SUBSCRIBE_TOPICS;
          MQTT::m_notReady = false;
          break;
 
@@ -165,8 +171,6 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
          break;
 
       case MQTT_EVENT_DATA:
-         fs = heap_caps_get_free_size(MALLOC_CAP_DEFAULT|MALLOC_CAP_32BIT|MALLOC_CAP_8BIT);
-//         ESP_LOGI(TAG, "MQTT_EVENT_DATA, free space = %d, rst_count = %d", fs, config->value("rst_count").toInt());
 #if PROCESS_INCOMMING
          if (true && MQTT::TOPIC_LEN > event->topic_len && MQTT::MESG_LEN > event->data_len)
          {
@@ -378,28 +382,59 @@ bool MQTT::start(void)
    return(rv);
 }
 
-bool MQTT::setBroker(std::string &broker)
+void MQTT::setBroker(std::string &broker)
 {
-   bool rv = false;
    m_broker = broker;
-   if (m_client != NULL)
-   {
-      esp_mqtt_client_disconnect(m_client);
-      return(rv);
-   }
-   else
-   {
-      m_broker = broker;
-      rv = start();
-//      pthread_create(&mqtt_thread, NULL, connectionExec, this);
-      return(rv);
-   }
 }
 
 void* MQTT::procMessages(void *)
 {
+   this_thread::sleep_for(std::chrono::seconds(2));
    while (true)
    {
+      if (m_wifi == NULL)
+      {
+         ESP_LOGW(TAG, "No wifi");
+         if (m_client != NULL)
+         {
+            ESP_LOGW(TAG, "disconnecting mqtt bus");
+            esp_mqtt_client_disconnect(m_client);
+         }
+         m_client = NULL;
+         this_thread::sleep_for(std::chrono::seconds(1));
+         continue;
+      }
+      else if ( ! m_wifi->connected() )
+      {
+         ESP_LOGW(TAG, "wifi not connected");
+         if (m_client != NULL)
+         {
+            ESP_LOGW(TAG, "disconnecting mqtt bus");
+            esp_mqtt_client_disconnect(m_client);
+            m_client = NULL;
+         }
+         this_thread::sleep_for(std::chrono::seconds(1));
+         continue;
+      }
+      else if (m_client == NULL)
+      {
+         ESP_LOGW(TAG, "wifi connected");
+         ESP_LOGW(TAG, "connecting mqtt bus");
+         mqtt_bus->start();
+         this_thread::sleep_for(std::chrono::seconds(1));
+         continue;
+      }
+
+      if (m_action == MQTT::SUBSCRIBE_TOPICS)
+      {
+         topic_list_t::iterator pos;
+         for (pos =  m_subTopics.begin(); pos != m_subTopics.end(); ++pos)
+         {
+            mqtt_bus->subscribe(*pos);
+         }
+         m_action = MQTT::NOP;
+      }
+         
 //      ESP_LOGI(TAG, "Processing incomming messages");
       string board = config->value("mqtt_ident").toString();
       MQTT::message_t *msg;
@@ -506,8 +541,12 @@ void* MQTT::procMessages(void *)
             tv.tv_usec = 0;
             tz.tz_minuteswest = 0;
             tz.tz_dsttime = 0;
+            ESP_LOGI(TAG, "setting system time: %d", (int)time);
             settimeofday(&tv, &tz);
             config->setTzMinutes(tz_minutes);
+            time += config->value("tz_minutes").toInt() * 60; 
+            ESP_LOGI(TAG, "setting RTC time: %d", (int)time);
+            rtc_4339->updateRTCTime(time);
          }
          if (topic == config->value("mqtt_temp_topic").toString())
          {

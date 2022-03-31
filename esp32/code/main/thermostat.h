@@ -1,6 +1,9 @@
 #ifndef THERMOSTAT_H
 #define THERMOSTAT_H
 
+#include <string>
+
+#include "SensorData.h"
 #include "variant.h"
 
 class Thermostat 
@@ -19,13 +22,10 @@ public:
    void initialize();
    bool update();
 
+   SensorData selectSensor(std::string sensors, time_t now);
    void SetOverride(float temp);
 
-   void CancelOverride()
-   {
-      m_override = false;
-   }
-
+   void CancelOverride();
    bool ReachedOverride(float cur_temp);
    static void *exec(void*);
 

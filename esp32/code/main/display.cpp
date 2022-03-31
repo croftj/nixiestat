@@ -5,9 +5,11 @@
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 
+#include "DBGPorts.h"
+
 #define  TOUCH_ENABLED  0
 
-#define  FLASH_VALUE    90
+#define  FLASH_VALUE    60
 
 #define TAG __PRETTY_FUNCTION__
 
@@ -26,7 +28,7 @@ Display::Display()
    {
       m_digitValues[x] = x;
    }
-   m_lamps = 0x00;
+   m_lamps = 0xa5;
    m_enabled = true;
    enableCounter = 0;
    m_loopCnt = 0;
@@ -36,7 +38,7 @@ void Display::init()
 {
 }
 
-void *Display::exec(void*)
+void Display::exec(void*)
 {
 #if 1
    std::this_thread::sleep_for(std::chrono::seconds(2));
@@ -44,7 +46,7 @@ void *Display::exec(void*)
    Digits[1]->off();
    Digits[2]->off();
    Digits[3]->off();
-   Digits[5]->on();
+   Digits[5]->off();
    Digits[6]->off();
    Segments[0]->off();
    Segments[1]->off();
@@ -57,19 +59,20 @@ void *Display::exec(void*)
    Segments[8]->off();
    Segments[9]->off();
 #endif
+   ESP_LOGI(TAG, "portTICK_PERIOD_MS = %d", portTICK_PERIOD_MS);
    while (true)
    {
-//      display->loop();
-      std::this_thread::sleep_for(std::chrono::milliseconds(50));
+      display->loop();
+      std::this_thread::sleep_for(std::chrono::milliseconds(1));
    }
-   return(NULL);
+   return;
 }
 
 void Display::loop()
 {
    bool showDigit;
-   ESP_LOGI(TAG, "Enter");
-#if 0
+//   ESP_LOGI(TAG, "Enter");
+#if 1
    if ( false || ! m_enabled ) 
    {
       m_loopCnt++;
@@ -82,7 +85,6 @@ void Display::loop()
             m_nextDigit = 0;
          }
       }
-      return;
    }
 //   if ( ++enableCounter > m_enableIdleTime) 
 //   {
@@ -90,9 +92,9 @@ void Display::loop()
 //      return;
 //   }
 
-   if ( m_loopCnt >= 3 ) 
+   if ( m_loopCnt >= 2 ) 
    {
-      ESP_LOGI(TAG, "All off");
+//      ESP_LOGI(TAG, "All off");
       /***********************************************/
       /*   Start  things  by turning off all of the  */
       /*   m_lamps and digits.                         */
@@ -110,12 +112,13 @@ void Display::loop()
    }
    else if ( m_loopCnt != 0 )
    {
-      ESP_LOGI(TAG, "display nop");
+//      ESP_LOGI(TAG, "display nop");
       m_loopCnt++;
       return;
    } 
    m_loopCnt++;
 
+#if 1
    /***********************************************/
    /*   Start by figuring out if the flash state  */
    /*   is on or off then                         */
@@ -128,15 +131,18 @@ void Display::loop()
    if ( flashCounter < 0 ) 
    {
 //         PORTB &= ~_BV(0);
-      ESP_LOGI(TAG, "hide digit");
+//      ESP_LOGI(TAG, "hide digit");
       showDigit = false;
    }
    else
    {
 //         PORTB |= _BV(0);
-      ESP_LOGI(TAG, "show digit");
+//      ESP_LOGI(TAG, "show digit");
       showDigit = true;
    }
+#else
+   showDigit = true;
+#endif
 
    /***********************************************/
    /*   Here we deal with digits                  */
@@ -161,20 +167,31 @@ void Display::loop()
       /*   appropriate pins to do the deed           */
       /***********************************************/
 
-      ESP_LOGI(TAG, "showDigit = %d", showDigit);
+//      ESP_LOGI(TAG, "showDigit = %d", showDigit);
       if ( showDigit ) 
       {
-         ESP_LOGI(TAG, "%d: %d", (int)m_nextDigit, (int)m_digitValues[m_nextDigit]);
-         Digits[m_nextDigit]->on();
-         Segments[m_digitValues[m_nextDigit]]->on();
+//         ESP_LOGI(TAG, "%d: %d", (int)m_nextDigit, (int)m_digitValues[m_nextDigit]);
+         /***************************************************/
+         /* leave blank any digit that has a number greater */
+         /* than 9                                          */
+         /***************************************************/
+         if (m_digitValues[m_nextDigit] <= 9)
+         {
+            Digits[m_nextDigit]->on();
+            Segments[m_digitValues[m_nextDigit]]->on();
+         }
       }
       m_nextDigit++;
    }
    else if ( m_nextDigit < 7)
    {
       uint16_t l = m_lamps;
+
       if ( ! showDigit ) 
+      {
+//         ESP_LOGI(TAG, "l = 0x%0x, lampFlashMask = 0x%0x", l, m_lampFlashMask);
          l &= ~m_lampFlashMask;
+      }
       Digits[m_nextDigit]->on();
 
       for (int x = 0; x < 10; x++ ) 
@@ -242,8 +259,8 @@ void Display::segmentOn(int segment)
 bool Display::disable()
 {
    bool rv = m_enabled;
+   ESP_LOGW(TAG, "Turning off HV");
    HVEnable->on();
-   Heat->on();
    m_enabled = false;
    enableCounter = 0;
    return(rv);
@@ -260,7 +277,6 @@ void Display::touch()
    enableCounter = 0;
 //   Serial << __PRETTY_FUNCTION__ << " here" << endl;
    HVEnable->off();
-   Heat->off();
    m_enabled = true;
 };
 

@@ -79,7 +79,7 @@ public:
 
    bool getPrevCall()
    {
-      return(m_prevCall);
+      return(m_lastCall);
    }
 
    time_t getCurrentCycleTime()
