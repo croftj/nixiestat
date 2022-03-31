@@ -493,7 +493,6 @@ void Ui::showYears(uint16_t year)
 void Ui::showSettings()
 {
 #if 1
-   static char ibuf[6];
    /***********************************************/
    /*   Start  by  turning  off all of the lamps  */
    /*   that  show  the setting. (The four lamps  */

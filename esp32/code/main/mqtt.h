@@ -11,7 +11,6 @@
 
 #include "freertos/semphr.h"
 
-static void *connectionExec(void *obj);
 static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event);
 
 class MQTT
@@ -126,7 +125,6 @@ protected:
    bool start(void);
 
 private:
-   friend void *connectionExec(void*);
    friend esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event);
 
    std::string                      m_broker;

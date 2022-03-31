@@ -196,7 +196,6 @@ extern "C" void wifi_scan()
 
 static void* ping_home(void *)
 {
-   bool led_state = true;
    while (true)
    {
       time_t timestamp;

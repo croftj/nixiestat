@@ -59,9 +59,6 @@ using namespace json11;
 
 extern Configuration *config;
 
-static pthread_t mqtt_thread = 0;
-
-
 MQTT::topic_list_t MQTT::m_subTopics;
 bool MQTT::m_busDisconnect = false;
 bool MQTT::m_notReady = false;
@@ -95,37 +92,6 @@ MQTT::MessageEntry* m_msgOutQueue[] =
 StaticSemaphore_t       MQTT::m_msgMutexBuf;
 SemaphoreHandle_t       MQTT::m_msgMutex;
 
-static void *connectionExec(void *obj)
-{
-   MQTT *mqtt = (MQTT*)obj;
-   ESP_LOGI(TAG, "connectionExec(): Enter");
-   while (true)
-   {
-      if (false)
-      {
-         if (mqtt->m_busDisconnect)
-         {
-            ESP_LOGE(TAG, "connectionExec(): mqtt disconnect detected!");
-            mqtt->m_notReady = true;
-            std::this_thread::sleep_for(std::chrono::milliseconds(50));
-            esp_mqtt_client_stop(mqtt->m_client);
-            esp_mqtt_client_destroy(mqtt->m_client);
-            mqtt->m_client = NULL;
-            mqtt->m_busDisconnect = false;
-            std::this_thread::sleep_for(std::chrono::milliseconds(1500));
-         }
-         if (! mqtt->connected())
-         {
-            ESP_LOGI(TAG, "connectionExec(): calling start");
-            mqtt->start();
-         }
-      }
-      std::this_thread::sleep_for(std::chrono::milliseconds(500));
-      esp_task_wdt_reset();
-   }
-   return(NULL);
-}
-
 static void log_error_if_nonzero(const char * message, int error_code)
 {
     if (error_code != 0) {
@@ -139,7 +105,6 @@ static esp_err_t mqtt_event_handler_cb(esp_mqtt_event_handle_t event)
    static char message[MQTT::MESG_LEN + 1];
    char *scp;
    char *cp;
-   int fs;
 
     // your_context_t *context = event->context;
 //   ESP_LOGI(TAG, "MQTT_EVENT: %d", event->event_id);
