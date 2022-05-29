@@ -1,11 +1,11 @@
 EESchema Schematic File Version 4
 EELAYER 30 0
 EELAYER END
-$Descr A4 11693 8268
+$Descr USLetter 11000 8500
 encoding utf-8
 Sheet 2 2
 Title "NixieStat Thermostat Display Board"
-Date "2022-01-30"
+Date "2022-05-29"
 Rev ""
 Comp "Joe Croft"
 Comment1 ""
