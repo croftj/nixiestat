@@ -681,7 +681,7 @@ Connection ~ 2450 2500
 Wire Wire Line
 	2450 2500 1650 2500
 Wire Wire Line
-	2350 6650 2350 7100
+	2350 6600 2350 7100
 Text GLabel 10400 3300 2    50   Input ~ 0
 RXD0
 Wire Wire Line
@@ -797,8 +797,8 @@ F 3 "" H 4100 4850 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	2350 6650 3200 6650
-Text GLabel 3200 6650 2    50   Input ~ 0
+	2350 6600 2900 6600
+Text GLabel 3200 6600 2    50   Input ~ 0
 IO-18
 Text GLabel 3200 6250 2    50   Input ~ 0
 IO-21
@@ -1014,4 +1014,25 @@ Wire Wire Line
 	7150 5850 7050 5850
 Connection ~ 7050 5850
 Connection ~ 6850 5850
+$Comp
+L Device:R_US R7
+U 1 1 6229B385
+P 2900 6800
+F 0 "R7" V 2695 6800 50  0000 C CNN
+F 1 "2.3K" V 2786 6800 50  0000 C CNN
+F 2 "Resistor_SMD:R_0805_2012Metric_Pad1.20x1.40mm_HandSolder" V 2940 6790 50  0001 C CNN
+F 3 "~" H 2900 6800 50  0001 C CNN
+	1    2900 6800
+	1    0    0    1   
+$EndComp
+Wire Wire Line
+	2900 6650 2900 6600
+Connection ~ 2900 6600
+Wire Wire Line
+	2900 6600 3200 6600
+Wire Wire Line
+	2800 7000 2900 7000
+Wire Wire Line
+	2900 7000 2900 6950
+Connection ~ 2800 7000
 $EndSCHEMATC

@@ -1,4 +1,4 @@
-19758143246787541
+19772967273168541
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -83048,6 +83048,13 @@ ESP32-DevKit
 36
 36
 croftj
+ESP32-DevKit-pcb-recepticals
+
+
+0
+36
+36
+croftj
 ESP32-WROVER-EM213EH2864PH3Q0
 
 
@@ -83062,12 +83069,26 @@ Mill-Max-0295
 0
 0
 croftj
+Mill-Max-295x7
+
+
+0
+7
+7
+croftj
 Mill-Max-295x10
 
 
 0
 10
 10
+croftj
+Mill-Max-295x11
+
+
+0
+11
+11
 croftj
 MillMax-0295
 
@@ -83076,6 +83097,13 @@ MillMax-0295
 1
 1
 croftj
+NE2
+
+
+0
+2
+2
+croftj
 QFP80P900X900X120-32N
 
 
@@ -83083,12 +83111,26 @@ QFP80P900X900X120-32N
 32
 32
 croftj
+SC-60-6-L PowerPak
+
+
+0
+4
+3
+croftj
 TES-1-2834015-6
 
 
 0
 12
 6
+croftj
+conn-phx-1703090
+
+
+0
+7
+7
 croftj
 esp32_e_wrover
 
@@ -83108,8 +83150,29 @@ in17
 Nixie IN-17
 
 0
-12
-12
+11
+11
+croftj
+micro_jumper
+
+
+0
+2
+2
+croftj
+pcb_jack-2x10
+
+
+0
+20
+20
+croftj
+pcb_jack-2x10-mirror
+
+
+0
+20
+20
 croftj
 pcb_jack-2x18
 

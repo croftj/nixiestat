@@ -48,14 +48,14 @@
 #define MQTT_EXAMPLE_CODE     0
 #define WIFI_CONNECTED_BIT    BIT0
 #define WIFI_FAIL_BIT         BIT1
-#define WIFI_MAXIMUM_RETRY    10
+#define WIFI_MAXIMUM_RETRY    100
 
 #define CONFIGURATION_TOPIC   "/configure"
 #define TIME_TOPIC            "/time"
 
 #define RED_LED_PIN  ((gpio_num_t)26)
 #define GRN_LED_PIN  ((gpio_num_t)21)
-#define GPIO_LED_MASK (/*(1ULL<<SNS_LED_PIN) | (1ULL<<RED_LED_PIN) | */(1ULL<<GRN_LED_PIN))
+#define GPIO_LED_MASK (/*(1ULL<<SNS_LED_PIN) | */ (1ULL<<RED_LED_PIN) | (1ULL<<GRN_LED_PIN))
 
 using namespace std;
 using namespace json11;
@@ -90,7 +90,9 @@ static void event_handler(void* arg, esp_event_base_t event_base,
    {
       if (s_retry_num <= WIFI_MAXIMUM_RETRY)
       {
+         gpio_set_level(RED_LED_PIN, 0);
          esp_wifi_connect();
+         gpio_set_level(RED_LED_PIN, 1);
          s_retry_num++;
          ESP_LOGI(TAG, "retry to connect to the AP");
       }
@@ -101,7 +103,6 @@ static void event_handler(void* arg, esp_event_base_t event_base,
       ESP_LOGI(TAG,"retry wifi connect");
       esp_wifi_connect();
       ESP_LOGI(TAG,"connect to the AP fail");
-      gpio_set_level(GRN_LED_PIN, 0);
       this_thread::sleep_for(std::chrono::milliseconds(50));
       gpio_set_level(GRN_LED_PIN, 1);
    }
@@ -295,8 +296,8 @@ extern "C" void app_main(void)
    led_conf.pull_down_en = (gpio_pulldown_t)0;
    led_conf.pull_up_en = (gpio_pullup_t)0;
    gpio_config(&led_conf);
-   gpio_set_level(RED_LED_PIN, 0);
-   gpio_set_level(GRN_LED_PIN, 0);
+   gpio_set_level(GRN_LED_PIN, 1);
+   gpio_set_level(RED_LED_PIN, 1);
 
 
    /* This helper function configures Wi-Fi or Ethernet, as selected in menuconfig.
