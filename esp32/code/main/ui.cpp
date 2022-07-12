@@ -26,7 +26,7 @@
 #include "esp_log.h"
 
 #include "display.h"
-#include "MPR121.h"
+#include "AT42QT2120.h"
 #include "ui.h"
 
 # include "DBGPorts.h"
@@ -53,7 +53,7 @@ void *Ui::runTimer(void*)
 {
    while (true)
    {
-      ui.haveKeyPress(mpr121->read());
+      ui.haveKeyPress(at42tp->read());
 //      ESP_LOGI(KEY, "keyState = 0x%04x", ui.m_keyState);
       if (true || ui.m_keyState == 0)
       {
@@ -103,7 +103,7 @@ void Ui::haveKeyPress(uint16_t keys)
    /***********************************************/
    else if ( m_keyState == 0x00 )
    {
-      ESP_LOGI(KEY, "keys = 0x%04x", keys);
+      ESP_LOGD(KEY, "keys = 0x%04x", keys);
       m_longInterval = 0;
       
       m_state->anyKeyEvent();       // Send this event first!
@@ -111,39 +111,39 @@ void Ui::haveKeyPress(uint16_t keys)
       if ( keys & KEY_MODE ) 
       {
          m_keyState = KEY_MODE;
-         ESP_LOGI(TAG, "modeEvent()");
+         ESP_LOGD(TAG, "modeEvent()");
          m_state->modeEvent();
       }
       else if ( keys & KEY_STEP ) 
       {
          m_keyState = KEY_STEP;
-         ESP_LOGI(TAG, "stepEvent()");
+         ESP_LOGD(TAG, "stepEvent()");
          m_state->stepEvent();
       }
       else if ( keys & KEY_UP ) 
       {
          m_keyState = KEY_UP;
-         ESP_LOGI(TAG, "upEvent()");
+         ESP_LOGD(TAG, "upEvent()");
          gpio_set_level(DBG_PIN_3, 1);
          m_state->upEvent();
       }
       else if ( keys & KEY_DOWN ) 
       {
          m_keyState = KEY_DOWN;
-         ESP_LOGI(TAG, "downEvent()");
+         ESP_LOGD(TAG, "downEvent()");
          gpio_set_level(DBG_PIN_3, 1);
          m_state->downEvent();
       }
       else if ( keys & KEY_SET ) 
       {
          m_keyState = KEY_SET;
-         ESP_LOGI(TAG, "setEvent()");
+         ESP_LOGD(TAG, "setEvent()");
          m_state->setEvent();
       }
       else if ( keys & KEY_CLEAR ) 
       {
          m_keyState = KEY_CLEAR;
-         ESP_LOGI(TAG, "clearEvent()");
+         ESP_LOGD(TAG, "clearEvent()");
          m_state->clearEvent();
       }
    }
@@ -200,7 +200,10 @@ void Ui::showOffset()
    ofs = abs(ofs) > 2 ? ((ofs < 0) ? -2 : 2) : ofs;
    ESP_LOGI(TAG, "2:ofs = %d", ofs);
    uint8_t lamp = Display::LAMP_SETTING_3;
-   display->clear_lamps();
+   for (uint8_t x = Display::LAMP_SETTING_1; x < Display::LAMP_SETTING_5; x++)
+   {
+      display->lamp(x, false);
+   }
    display->lamp(lamp, true);
    ESP_LOGI(TAG, "3:ofs = %d", ofs);
    while (ofs != 0)
@@ -229,7 +232,7 @@ void Ui::showMode()
    }
 }
 
-void Ui::showTemperature(uint8_t index, bool top)
+void Ui::showTemperature(uint8_t index)
 {
    SensorData sensor;
    float temp = 0.0;
@@ -263,7 +266,7 @@ void Ui::showTemperature(uint8_t index, bool top)
       temp = sensor.temperature();
    }
    ESP_LOGI(TAG, "temp = %f", temp);
-   showTemperature(temp, top);
+   showTemperature(temp);
 }
 
 void Ui::restoreSettings()
@@ -312,7 +315,7 @@ void Ui::decrTemperature()
       ESP_LOGI(TAG, "ofs = %d", ofs);
       config->setValue("ovr_offset", Variant(ofs), false);
       showOffset();
-      showTemperature((uint8_t)CURRENT_SETTINGS, true);
+      showTemperature((uint8_t)CURRENT_SETTINGS);
       gpio_set_level(DBG_PIN_3, 0);
    }
 }
@@ -325,7 +328,7 @@ void Ui::incrTemperature()
       ESP_LOGI(TAG, "ofs = %d", ofs);
       config->setValue("ovr_offset", Variant(ofs), false);
       showOffset();
-      showTemperature((uint8_t)CURRENT_SETTINGS, true);
+      showTemperature((uint8_t)CURRENT_SETTINGS);
       gpio_set_level(DBG_PIN_3, 0);
    }
 }
@@ -377,14 +380,15 @@ void Ui::showHours(uint16_t hour)
 {
    display->setDigit(Display::DIGIT_HOURS_UNITS, hour % 10);
    display->setDigit(Display::DIGIT_HOURS_TENS,  hour / 10);
-   display->setDigit(Display::DIGIT_HOURS_X, 99);
 }
 
 void Ui::showMinutes(uint16_t minute)
 {
+   display->lamp(Display::LAMP_TOP_COLON, true);
+   display->lamp(Display::LAMP_BOT_COLON, true);
    display->setDigit(Display::DIGIT_MINS_UNITS, minute % 10);
    display->setDigit(Display::DIGIT_MINS_TENS,  minute / 10);
-   display->setDigit(Display::DIGIT_MINS_X, 99);
+   display->blankDigits(Display::DIGIT_MASK, false);
 }
 
 void Ui::showMonths(uint16_t month)
@@ -397,38 +401,37 @@ void Ui::showMonths(uint16_t month)
 #endif
 }
 
-void Ui::showTemperature(SensorData sensor, bool top)
+void Ui::showTemperature(SensorData sensor)
 {
    time_t now;
    time(&now);
    uint8_t flash_mask = 0;
    if ( ! sensor.isValid() || sensor.timestamp() < 5 * 30)
    {
-      flash_mask = top ? Display::TOP_TEMP_MASK : Display::BOT_TEMP_MASK;
+      flash_mask = 0; //Display::TEMP_MASK;
       display->flashDigits(flash_mask, true);
    }
    else
    {
       display->flashDigits(flash_mask, true);
    }
-   showTemperature(sensor.temperature(), top);
+   showTemperature(sensor.temperature());
 }
 
 
       
-void Ui::showTemperature(float temp, bool top)
+void Ui::showTemperature(float temp)
 {
    /***********************************************/
    /*   Start  by  showing  if  it's  below 0 or  */
    /*   above 100                                 */
    /***********************************************/
    char buf[16];
-   uint8_t ofs;
 
    sprintf(buf, "%4.1f", temp);
    ESP_LOGI(KEY, "temp buf = |%s|", buf);
    char *cp = buf;
-   int dp = top ? Display::LAMP_TOP_DP : Display::LAMP_BOT_DP;
+   int dp = Display::LAMP_DP;
    if (*cp == '-')
    {
       display->lamp(Display::LAMP_MINUS, true);
@@ -440,21 +443,16 @@ void Ui::showTemperature(float temp, bool top)
    }
    if (temp < 100.0)
    {
+      ESP_LOGI(KEY, "dp, temp: %f, dp = %d", temp, dp);
       display->lamp(dp, true);
    }
    else 
    {
+      ESP_LOGI(KEY, "No dp, temp: %f, dp = %d", temp, dp);
       display->lamp(dp, false);
    }
+   display->lamp(Display::LAMP_TOP_COLON, false);
 
-   if (top)
-   {
-      ofs = 0;
-   }
-   else
-   {
-      ofs = Display::DIGIT_BOT_TEMP_MSD;
-   }
    for (uint8_t x = 0; x < 3; x++)
    {
       while (*cp != 0x00 && (*cp < '0' || *cp > '9'))
@@ -462,10 +460,11 @@ void Ui::showTemperature(float temp, bool top)
       if (*cp == 0x00)
          break;
       uint8_t val = *cp - 0x30;
-      ESP_LOGI(KEY, "ofs: %d, x: %d, val: %d", ofs, x, val);
-      display->setDigit(ofs + x, val);
+      ESP_LOGI(KEY, "x: %d, val: %d", x, val);
+      display->setDigit(x, val);
       cp++;
    }
+   display->blankDigits(_BV(3), true);
 }
 
 void Ui::showYears(uint16_t year)

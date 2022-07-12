@@ -20,10 +20,11 @@ public:
       LAMP_SETTING_5,
       LAMP_COOL,
       LAMP_HEAT,
-      LAMP_BOT_DP,
-      LAMP_TOP_DP,
+      LAMP_TOP_COLON,
+      LAMP_BOT_COLON,
       LAMP_MINUS,
-      NUM_m_lamps,        // Must remain at the end of the lamp definitions
+      NUM_LAMPS,        // Must remain at the end of the lamp definitions
+      LAMP_DP = LAMP_BOT_COLON, // except for this one
 
       /***********************************************/
       /*   These are used for setting the values of  */
@@ -32,23 +33,22 @@ public:
       DIGIT_TOP_TEMP_MSD   = 0,
       DIGIT_TOP_TEMP_NSD   = 1,
       DIGIT_TOP_TEMP_LSD   = 2,
-      DIGIT_BOT_TEMP_MSD   = 3,
-      DIGIT_BOT_TEMP_NSD   = 4,
-      DIGIT_BOT_TEMP_LSD   = 5,
       DIGIT_MONTH_TENS     = 0,
       DIGIT_MONTH_UNITS    = 1,
+      DIGIT_DAY_TENS       = 2,
       DIGIT_DAY_UNITS      = 3,
-      DIGIT_DAY_TENS       = 4,
-      DIGIT_YEAR_TENS      = 2,
-      DIGIT_YEAR_UNITS     = 5,
-      DIGIT_HOURS_TENS     = 1,
-      DIGIT_HOURS_UNITS    = 2,
+      DIGIT_YEAR_UNITS     = 0,
+      DIGIT_YEAR_TENS      = 1,
+      DIGIT_YEAR_100       = 1,
+      DIGIT_YEAR_1000      = 1,
+      DIGIT_HOURS_TENS     = 0,
+      DIGIT_HOURS_UNITS    = 1,
+      DIGIT_MINS_TENS      = 2,
+      DIGIT_MINS_UNITS     = 3,
       DIGIT_HOURS_X        = 0,
-      DIGIT_MINS_TENS      = 4,
-      DIGIT_MINS_UNITS     = 5,
-      DIGIT_MINS_X         = 3,
-      DIGIT_COUNT          = 6,
-      DIGIT_MASK           = 0x3f,
+      DIGIT_MINS_X         = 2,
+      DIGIT_COUNT          = 4,
+      DIGIT_MASK           = 0x0f,
 
       /***********************************************/
       /*   These  are  used  for flashing different  */
@@ -59,8 +59,6 @@ public:
       FLASH_MONTH    = _BV(0) | _BV(1),
       FLASH_DAY      = _BV(2) | _BV(3),
       FLASH_YEAR     = _BV(0) | _BV(1) | _BV(2) | _BV(3),
-      TOP_TEMP_MASK  = _BV(DIGIT_TOP_TEMP_MSD) | _BV(DIGIT_TOP_TEMP_NSD) | _BV(DIGIT_TOP_TEMP_LSD),
-      BOT_TEMP_MASK  = _BV(DIGIT_BOT_TEMP_MSD) | _BV(DIGIT_BOT_TEMP_NSD) | _BV(DIGIT_BOT_TEMP_LSD),
 
    };
 
@@ -72,7 +70,7 @@ public:
    bool disable();
    void segmentsOff();
    void segmentOn(int segment);
-   void touch();
+   void touch(bool debug=false);
 
 
    void set_speed(uint16_t spd)
@@ -188,6 +186,7 @@ public:
    uint8_t  m_nextDigit;
    uint8_t  m_loopCnt;
    bool     m_enabled;
+   bool     m_debug;
 };
 
 extern Display* display;

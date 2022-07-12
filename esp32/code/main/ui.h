@@ -46,8 +46,8 @@ public:
       TEMP_TOP             = true,
       KEY_MODE             = 0x01, // 0x400,
       KEY_STEP             = 0x02, // 0x800,
-      KEY_DOWN             = 0x10, // 0x80,
-      KEY_UP               = 0x20, // 0x40,
+      KEY_DOWN             = 0x04, // 0x80,
+      KEY_UP               = 0x08, // 0x40,
       KEY_SET              = 0x04, // 0x04,
       KEY_CLEAR            = 0x08, // 0x08,
 
@@ -90,25 +90,13 @@ public:
    void showMinutes(uint16_t minute);
    void showMonths(uint16_t month);
    void showOffset();
-   void showTemperature(SensorData sensor, bool top = false);
-   void showTemperature(float temp, bool top = false);
-   void showTemperature(uint8_t temp, bool top = false);
+   void showTemperature(SensorData sensor );
+   void showTemperature(float temp);
+   void showTemperature(uint8_t temp);
    void showYears(uint16_t year);
    void showSettings();
    void showMode();
    static void *runTimer(void*);
-
-   void blankTemperature(bool top, bool blank)
-   {
-      if (top)
-      {
-         display->blankDigits(Display::TOP_TEMP_MASK, blank);
-      }
-      else
-      {
-         display->blankDigits(Display::BOT_TEMP_MASK, blank);
-      }
-   }
 
    void clearLamps()
    {
@@ -170,6 +158,8 @@ public:
 
    void displayOff()
    {
+      display->digitsOff();
+      display->segmentsOff();
       display->disable();
    }
 
@@ -241,7 +231,7 @@ public:
       m_showMonDay = false;
       showSettings();
       display->flashDigits(Display::DIGIT_MASK, false);   
-      display->flashDigits(Display::TOP_TEMP_MASK, true);   
+//      display->flashDigits(Display::TOP_TEMP_MASK, true);   
    }
 
    uint8_t getSetting()

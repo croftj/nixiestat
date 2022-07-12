@@ -404,7 +404,7 @@ void showTime(std::ostream& d_out)
    now += Configuration::m_tzMinutes.toInt() * 60;
 //   ESP_LOGI(TAG, "local now: %d", (int)now);
    cur_time = gmtime(&now);
-   strftime(buf, sizeof(buf), "%T %D", cur_time);
+   strftime(buf, sizeof(buf), "%T %d/%m/%Y", cur_time);
    d_out << buf;
 }
 

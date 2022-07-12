@@ -85,9 +85,10 @@ void UI_Idle::wakenEvent()
 
 void UI_Idle::onEntry()
 {
+   ESP_LOGW(TAG, "Shutting off UI");
+   ui.displayOff();
    ui.clearLamps();
    ui.flashNone();
-   ui.displayOff();
 }
 
 
@@ -120,6 +121,7 @@ void UI_Awake::downEvent()
 void UI_Awake::modeEvent()
 {
    ui.setSetting(Ui::TIME_SETTING_1);
+   ESP_LOGW(TAG, "Advancing Mode");
    ui.setState( &state_ModeAdvance );
 }
 
@@ -166,8 +168,8 @@ void UI_ShowTemp::upEvent()
 {
 //   ui.setState( &state_Awake );
 //   ui.flashTemperature();
+   ESP_LOGI(KEY, "UpEvent");
    ui.setSetting(Ui::CURRENT_SETTINGS);
-   ESP_LOGI(KEY, "increment");
    ui.incrTemperature();   
 //   ui.saveTemperature();
 }
@@ -176,47 +178,60 @@ void UI_ShowTemp::downEvent()
 {
 //   ui.setState( &state_Awake );
 //   ui.flashTemperature();
+   ESP_LOGI(KEY, "DownEvent");
    ui.setSetting(Ui::CURRENT_SETTINGS);
-   ESP_LOGI(KEY, "decrement");
    ui.decrTemperature();   
 //   ui.saveTemperature();
 }
 
 void UI_ShowTemp::setEvent()
 {
+   ESP_LOGI(KEY, "Moving to Awake");
    ui.flashNone();
    ui.setState( &state_Awake );
 }
 
 void UI_ShowTemp::clearEvent()
 {
+   ESP_LOGI(KEY, "Moving to Awake");
    ui.flashNone();
    ui.setState( &state_Awake );
 }
 
 void UI_ShowTemp::modeEvent()
 {
+   ESP_LOGI(KEY, "Moving to ModeAdvance");
    ui.setState( &state_ModeAdvance );
 }
 
 void UI_ShowTemp::stepEvent()
 {
+   ESP_LOGI(KEY, "Moving to HeatCool");
    ui.setState( &state_HeatCool );
 }
 
 void UI_ShowTemp::timeLongEvent()
 {
+   ESP_LOGI(KEY, "Moving to Idle");
    ui.setState( &state_Idle );
 }
 
 void UI_ShowTemp::timeShortEvent()
 {
+   ESP_LOGI(KEY, "Moving to next setting");
    uint8_t setting = ui.getSetting();
    if (setting < Ui::NUM_SETTINGS)
    {
-      ui.showTemperature(setting, (bool)Ui::TEMP_BOTTOM);
-      ui.blankTemperature(Ui::TEMP_BOTTOM, false);
-      ui.showSettings();
+      ui.showTemperature(setting);
+      int8_t ofs = config->value("ovr_offset").toInt();
+      if (ofs == 0 || setting < 4)
+      {
+         ui.showSettings();
+      }
+      else
+      {
+         ui.showOffset();
+      }
       ui.setSetting(++setting);
    }
    else
@@ -227,12 +242,12 @@ void UI_ShowTemp::timeShortEvent()
 
 void UI_ShowTemp::onEntry()
 {
+   ESP_LOGI(KEY, "Enter");
    ui.showMode();
    ui.setSetting(Ui::TIME_SETTING_1);
-   ui.showTemperature((uint8_t)Ui::CURRENT_SETTINGS, (bool)Ui::TEMP_TOP);
-   ui.showOffset();
+   ui.showTemperature((uint8_t)Ui::TIME_SETTING_1);
+   ui.showSettings();
 //   ui.showTempOffset();
-   ui.blankTemperature(Ui::TEMP_BOTTOM, true);
    ui.displayOn();
 }
 

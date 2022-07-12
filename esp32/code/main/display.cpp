@@ -30,6 +30,7 @@ Display::Display()
    }
    m_lamps = 0xa5;
    m_enabled = true;
+   m_debug = true;
    enableCounter = 0;
    m_loopCnt = 0;
 }
@@ -62,7 +63,10 @@ void Display::exec(void*)
    ESP_LOGI(TAG, "portTICK_PERIOD_MS = %d", portTICK_PERIOD_MS);
    while (true)
    {
-      display->loop();
+      if (! display->m_debug)
+      {
+         display->loop();
+      }
       std::this_thread::sleep_for(std::chrono::milliseconds(1));
    }
    return;
@@ -73,32 +77,14 @@ void Display::loop()
    bool showDigit;
 //   ESP_LOGI(TAG, "Enter");
 #if 1
-   if ( false || ! m_enabled ) 
-   {
-      m_loopCnt++;
-      if ( m_loopCnt >= 3 ) 
-      {
-         m_loopCnt = 0;
-         m_nextDigit++;
-         if ( m_nextDigit >= 7 ) 
-         {
-            m_nextDigit = 0;
-         }
-      }
-   }
-//   if ( ++enableCounter > m_enableIdleTime) 
-//   {
-//      disable();
-//      return;
-//   }
-
-   if ( m_loopCnt >= 2 ) 
+   /**********************************************************/
+   /* If this is the third time through, turn off all of the */
+   /* digits and segments and reset the loop counter.        */
+   /* This will provide the inter-digit delay.               */
+   /**********************************************************/
+   if ( m_loopCnt >= 3 ) 
    {
 //      ESP_LOGI(TAG, "All off");
-      /***********************************************/
-      /*   Start  things  by turning off all of the  */
-      /*   m_lamps and digits.                         */
-      /***********************************************/
       for (int x = 0; x < 10; x++) 
       {
          Segments[x]->off();
@@ -110,6 +96,11 @@ void Display::loop()
       m_loopCnt = 0;
       return;
    }
+
+   /********************************************************/
+   /* Otherwise, if this is not the first time through the */
+   /* loop, Just continue leaving the as they are.         */
+   /********************************************************/
    else if ( m_loopCnt != 0 )
    {
 //      ESP_LOGI(TAG, "display nop");
@@ -119,10 +110,14 @@ void Display::loop()
    m_loopCnt++;
 
 #if 1
-   /***********************************************/
-   /*   Start by figuring out if the flash state  */
-   /*   is on or off then                         */
-   /***********************************************/
+   /********************************************************/
+   /* On the first loop through, figure out if the current */
+   /* digit/lamp is flashing.                              */
+   /*                                                      */
+   /* Then show the current digit or lamp is appropriate.  */
+   /*                                                      */
+   /* After this, move on to the next digit.               */
+   /********************************************************/
    flashCounter--;
    if ( flashCounter < (0 - FLASH_VALUE) )
    {
@@ -147,7 +142,7 @@ void Display::loop()
    /***********************************************/
    /*   Here we deal with digits                  */
    /***********************************************/
-   if ( m_nextDigit < 6 ) 
+   if ( m_nextDigit < 4 ) 
    {
 //      PORTB &= ~_BV(2);
       /***********************************************/
@@ -183,7 +178,7 @@ void Display::loop()
       }
       m_nextDigit++;
    }
-   else if ( m_nextDigit < 7)
+   else if ( m_nextDigit < 5)
    {
       uint16_t l = m_lamps;
 
@@ -263,19 +258,21 @@ bool Display::disable()
    HVEnable->on();
    m_enabled = false;
    enableCounter = 0;
+   m_debug = false;
    return(rv);
 };
 
-void Display::touch()
+void Display::touch(bool debug)
 {
    if ( ! m_enabled ) 
    {
       m_loopCnt = 0;
       m_nextDigit = 0;
    }
+   m_debug = debug;
 
    enableCounter = 0;
-//   Serial << __PRETTY_FUNCTION__ << " here" << endl;
+   ESP_LOGW(TAG, "m_debug = %d", m_debug);
    HVEnable->off();
    m_enabled = true;
 };

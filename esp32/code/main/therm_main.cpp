@@ -30,9 +30,9 @@
 #include "display.h"
 #include "IOPorts.h"
 #include "json11.hpp"
-#include "MPR121.h"
-#include "mqtt_client.h"
 #include "mqtt.h"
+#include "mqtt_client.h"
+#include "AT42QT2120.h"
 #include "PT7C4339.h"
 #include "thermostat.h"
 #include "ui.h"
@@ -268,7 +268,7 @@ extern "C" void app_main(void)
    Heat->initialize(I2C_NUM_0, 5, 4, 256000);
    Heat->setPort(0xff);
    HVEnable->on();
-   mpr121   = new MPR121(MPR121::OTHER, 0x5a, 0xff, (gpio_num_t)35);
+   at42tp   = new AT42QT2120(AT42QT2120::OTHER, (gpio_num_t)35);
    rtc_4339 = new PT7C4339(PT7C4339::TRICKLE_2K, PT7C4339::SQW_32K);
    
 #endif

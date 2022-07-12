@@ -441,6 +441,11 @@ void* MQTT::procMessages(void *)
                      ESP_LOGI(TAG, "Enabling HV");
                      display->touch();
                   }
+                  else if (state == "debug" || state == "dbg")
+                  {
+                     ESP_LOGI(TAG, "Enabling HV");
+                     display->touch(true);
+                  }
                   else
                   {
                      ESP_LOGI(TAG, "Disabling HV");
